@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: StreamingAssets
+  m_EditorClassIdentifier: 
+  m_GroupName: StreamingAssets
+  m_GUID: e56bb576e1fd142d5a0a710d5f77af80
+  m_SerializeEntries:
+  - m_GUID: 22424982528484e4b994af452a82eca2
+    m_Address: Assets/AiTest/Addressables/StreamingAssets/Journey
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ef5a25ab5ae141d991c8808a6f60382
+    m_Address: Assets/AiTest/Addressables/StreamingAssets/Match
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ef3b2e5eb8a054815a86e01dfe20f577
+    m_Address: Assets/AiTest/Addressables/StreamingAssets/MainMenu
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: ff08465ae755343c3820fe627157777e, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 61dcec1a2239d4ffc876cd091b235484, type: 2}
+    - {fileID: 11400000, guid: 0e8d8d39d10754e66875248cada2eb70, type: 2}
