@@ -7,7 +7,7 @@ namespace Lumley.AiTest.ColorSort
     public class ColorSortController : BaseGameController
     {
         [Header("Color Sort Specific")] public Transform tubesParent;
-        public ObjectPool<Block> blockPool;
+        public BlockPool blockPool;
 
         private List<ColorTube> tubes = new List<ColorTube>();
         private ColorTube selectedTube;

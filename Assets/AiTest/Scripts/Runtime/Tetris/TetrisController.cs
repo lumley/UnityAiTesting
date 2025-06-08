@@ -6,7 +6,7 @@ namespace Lumley.AiTest.Tetris
     public class TetrisController : BaseGameController
     {
         [Header("Tetris Specific")] public Transform gridParent;
-        public ObjectPool<Block> blockPool;
+        public BlockPool blockPool;
         public TetrisPiece[] piecePrefabs;
 
         private TetrisGrid grid;

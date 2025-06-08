@@ -7,7 +7,7 @@ namespace Lumley.AiTest.BlockJam
     public class BlockJamController : BaseGameController
     {
         [Header("Block Jam Specific")] public Transform gridParent;
-        public ObjectPool<Block> blockPool;
+        public BlockPool blockPool;
         public Block targetBlock;
         public Transform exitZone;
 

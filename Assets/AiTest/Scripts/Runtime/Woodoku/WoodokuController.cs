@@ -8,7 +8,7 @@ namespace Lumley.AiTest.Woodoku
     {
         [Header("Woodoku Specific")] public Transform gridParent;
         public Transform pieceArea;
-        public ObjectPool<Block> blockPool;
+        public BlockPool blockPool;
 
         private WoodokuGrid grid;
         private List<WoodokuPiece> availablePieces = new List<WoodokuPiece>();
