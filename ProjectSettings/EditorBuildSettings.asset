@@ -8,6 +8,24 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/AiTest/Scenes/StartUpScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/AiTest/Addressables/StreamingAssets/MainMenu/MainMenu.unity
+    guid: f6c4f953bc15d4a25b3518eff77d82be
+  - enabled: 1
+    path: Assets/AiTest/Addressables/StreamingAssets/Journey/Journey.unity
+    guid: 23bbe43b3312c4a04953d10f127e7a5e
+  - enabled: 1
+    path: Assets/AiTest/Addressables/StreamingAssets/GameWoodoku/WoodokuScene.unity
+    guid: a1aa11e1d79814dc3b1081668619d243
+  - enabled: 1
+    path: Assets/AiTest/Addressables/StreamingAssets/GameTetris/TetrisScene.unity
+    guid: e3bb7aba770ea42a6863f73718c38484
+  - enabled: 1
+    path: Assets/AiTest/Addressables/StreamingAssets/GameColorSort/ColorSortScene.unity
+    guid: 187f7a2db93734b7c926d04cb847d100
+  - enabled: 1
+    path: Assets/AiTest/Addressables/StreamingAssets/GameBlockJam/BlockJamScene.unity
+    guid: 47838efbf20a844c1b4e6fdaad0d97d3
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 6929edb74736544caa319b961f9e5bf4, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
