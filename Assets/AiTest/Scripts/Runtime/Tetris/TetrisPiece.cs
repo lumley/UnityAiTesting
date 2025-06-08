@@ -10,18 +10,31 @@ namespace Lumley.AiTest.Tetris
 
         private Vector2Int position;
         private Block[] blocks;
+        private ObjectPool<Block> blockPool;
 
-        public void Initialize(Vector2Int startPos)
+        public void Initialize(Vector2Int startPos, ObjectPool<Block> pool)
         {
             position = startPos;
+            blockPool = pool;
 
             blocks = new Block[blockPositions.Length];
             for (int i = 0; i < blockPositions.Length; i++)
             {
-                GameObject blockObj = new GameObject($"Block_{i}");
-                blockObj.transform.SetParent(transform);
+                Block block;
+                if (blockPool != null)
+                {
+                    block = blockPool.GetObject();
+                    block.gameObject.name = $"Block_{i}";
+                    block.transform.SetParent(transform);
+                }
+                else
+                {
+                    GameObject blockObj = new GameObject($"Block_{i}");
+                    blockObj.transform.SetParent(transform);
+                    block = blockObj.AddComponent<Block>();
+                }
 
-                blocks[i] = blockObj.AddComponent<Block>();
+                blocks[i] = block;
                 blocks[i].Initialize(Block.BlockType.Standard, pieceColor);
 
                 UpdateBlockPosition(i);
@@ -94,7 +107,16 @@ namespace Lumley.AiTest.Tetris
             {
                 Vector2Int worldPos = position + blockPositions[i];
                 grid.SetBlock(worldPos, blocks[i]);
-                blocks[i].transform.SetParent(null); // Remove from piece hierarchy
+                if (blockPool != null)
+                {
+                    blocks[i].transform.SetParent(null);
+                    // Optionally, you may want to deactivate or reset the block here before returning to pool
+                    blockPool.ReturnObject(blocks[i]);
+                }
+                else
+                {
+                    blocks[i].transform.SetParent(null); // Remove from piece hierarchy
+                }
             }
         }
 

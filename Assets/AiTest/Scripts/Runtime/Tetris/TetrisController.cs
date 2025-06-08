@@ -75,7 +75,7 @@ namespace Lumley.AiTest.Tetris
             currentPiece = nextPiece;
             nextPiece = Instantiate(piecePrefabs[Random.Range(0, piecePrefabs.Length)]);
 
-            currentPiece.Initialize(new Vector2Int(5, 18));
+            currentPiece.Initialize(new Vector2Int(5, 18), blockPool);
 
             if (!currentPiece.IsValidPosition(grid))
             {
