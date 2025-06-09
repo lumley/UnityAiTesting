@@ -17,7 +17,7 @@ namespace Lumley.AiTest.BlockJam
         private int maxMoves;
         private BlockJamPiece selectedPiece;
 
-        protected override void InitializeGame()
+        protected override void InitializeGame(GameManager.Difficulty difficulty)
         {
             var config = GameManager.Instance.gameConfig.blockJamConfig;
             maxMoves = config.movesToWin[(int)GameManager.Instance.CurrentDifficulty];

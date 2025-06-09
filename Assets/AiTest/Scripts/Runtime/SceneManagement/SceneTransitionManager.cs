@@ -1,53 +1,31 @@
-using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 
 namespace Lumley.AiTest.SceneManagement
 {
-    public class SceneTransitionManager : MonoBehaviour
+    public class SceneTransitionManager : MonoBehaviour, ISceneTransitionManager
     {
-        public static SceneTransitionManager Instance { get; private set; }
+        [Header("Transition Settings")] [SerializeField]
+        private GameObject _transitionPanel = null!;
 
-        [Header("Transition Settings")] public GameObject transitionPanel;
-        public float transitionDuration = 1f;
+        [SerializeField] private float _fadeInTime = 0.3f;
+        [SerializeField] private float _fadeOutTime = 0.2f;
 
-        private void Awake()
+        [SerializeField] private CanvasGroup _canvasGroup = null!;
+
+        public async Task TransitionToSceneAsync(AssetReference sceneReference,
+            LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
+            _canvasGroup.alpha = 0f;
+            _transitionPanel.SetActive(true);
 
-        public void TransitionToScene(string sceneName)
-        {
-            StartCoroutine(TransitionCoroutine(sceneName));
-        }
-
-        private IEnumerator TransitionCoroutine(string sceneName)
-        {
-            // Fade out
-            if (transitionPanel != null)
-            {
-                transitionPanel.SetActive(true);
-                yield return new WaitForSeconds(transitionDuration / 2);
-            }
-
-            // Load scene
-            SceneManager.LoadScene(sceneName);
-
-            // Fade in
-            yield return new WaitForSeconds(transitionDuration / 2);
-
-            if (transitionPanel != null)
-            {
-                transitionPanel.SetActive(false);
-            }
+            await _canvasGroup.DOFade(1f, _fadeInTime).AsyncWaitForCompletion();
+            await Addressables.LoadSceneAsync(sceneReference, loadSceneMode).Task;
+            await _canvasGroup.DOFade(0f, _fadeOutTime).AsyncWaitForCompletion();
+            _transitionPanel.SetActive(false);
         }
     }
 }

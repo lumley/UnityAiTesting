@@ -1,3 +1,4 @@
+using System;
 using Lumley.AiTest.GameShared;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,45 +7,40 @@ namespace Lumley.AiTest.MainMenu
 {
     public class MainMenuController : MonoBehaviour
     {
-        [Header("Menu UI")] public Button tetrisButton;
-        public Button woodokuButton;
-        public Button blockJamButton;
-        public Button colorSortButton;
-
-        [Header("Difficulty Buttons")] public Button easyButton;
-        public Button mediumButton;
-        public Button hardButton;
-        public Button impossibleButton;
-
-        private GameManager.MiniGameType selectedGame;
+        [SerializeField] private Button _continueButton = null!;
+        [SerializeField] private Button _newGameButton = null!;
+        [SerializeField] private Button _settingsButton = null!;
 
         private void Start()
         {
             SetupButtons();
         }
 
+        private void OnEnable()
+        {
+            // TODO (slumley): Check if a game can be continued
+            _continueButton.gameObject.SetActive(false);
+        }
+
         private void SetupButtons()
         {
-            tetrisButton.onClick.AddListener(() => SelectGame(GameManager.MiniGameType.Tetris));
-            woodokuButton.onClick.AddListener(() => SelectGame(GameManager.MiniGameType.Woodoku));
-            blockJamButton.onClick.AddListener(() => SelectGame(GameManager.MiniGameType.BlockJam));
-            colorSortButton.onClick.AddListener(() => SelectGame(GameManager.MiniGameType.ColorSort));
-
-            easyButton.onClick.AddListener(() => StartGame(GameManager.Difficulty.Easy));
-            mediumButton.onClick.AddListener(() => StartGame(GameManager.Difficulty.Medium));
-            hardButton.onClick.AddListener(() => StartGame(GameManager.Difficulty.Hard));
-            impossibleButton.onClick.AddListener(() => StartGame(GameManager.Difficulty.Impossible));
+            _continueButton.onClick.AddListener(OnContinueClicked);
+            _newGameButton.onClick.AddListener(OnNewGameClicked);
+            _settingsButton.onClick.AddListener(OnSettingsClicked);
         }
 
-        private void SelectGame(GameManager.MiniGameType gameType)
+        private void OnSettingsClicked()
         {
-            selectedGame = gameType;
-            // Show difficulty selection UI
+            // TODO (slumley): Open settings menu
         }
 
-        private void StartGame(GameManager.Difficulty difficulty)
+        private void OnNewGameClicked()
         {
-            GameManager.Instance.StartMiniGame(selectedGame, difficulty);
+        }
+
+        private void OnContinueClicked()
+        {
+            // TODO (slumley): Continue the progress with the last saved game (use preferences)
         }
     }
 }

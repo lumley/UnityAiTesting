@@ -1,5 +1,7 @@
 using System;
+using Lumley.AiTest.GameShared;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 
 namespace Lumley.AiTest.SceneManagement
@@ -12,7 +14,7 @@ namespace Lumley.AiTest.SceneManagement
     {
         [SerializeField] private Button _button = null!;
 
-        [SerializeField] private string _targetSceneName = null!;
+        [SerializeField] private AssetReference _targetScene = null!;
 
         private void OnEnable()
         {
@@ -29,10 +31,18 @@ namespace Lumley.AiTest.SceneManagement
             _button = GetComponent<Button>();
         }
 
-        private void OnPressed()
+        private async void OnPressed()
         {
             _button.interactable = false;
-            SceneTransitionManager.Instance.TransitionToScene(_targetSceneName);
+            try
+            {
+                var sceneTransitionManager = Toolbox.Get<ISceneTransitionManager>();
+                await sceneTransitionManager.TransitionToSceneAsync(_targetScene);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
         }
     }
 }

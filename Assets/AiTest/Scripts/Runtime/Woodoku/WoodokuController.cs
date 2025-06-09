@@ -16,7 +16,7 @@ namespace Lumley.AiTest.Woodoku
         private int targetScore;
         private int piecesRemaining;
 
-        protected override void InitializeGame()
+        protected override void InitializeGame(GameManager.Difficulty difficulty)
         {
             var config = GameManager.Instance.gameConfig.woodokuConfig;
             targetScore = config.targetScores[(int)GameManager.Instance.CurrentDifficulty];

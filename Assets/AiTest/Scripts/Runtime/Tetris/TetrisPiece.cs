@@ -107,16 +107,7 @@ namespace Lumley.AiTest.Tetris
             {
                 Vector2Int worldPos = position + blockPositions[i];
                 grid.SetBlock(worldPos, blocks[i]);
-                if (blockPool != null)
-                {
-                    blocks[i].transform.SetParent(null);
-                    // Optionally, you may want to deactivate or reset the block here before returning to pool
-                    blockPool.ReturnObject(blocks[i]);
-                }
-                else
-                {
-                    blocks[i].transform.SetParent(null); // Remove from piece hierarchy
-                }
+                blocks[i].transform.SetParent(null); // Remove from piece hierarchy
             }
         }
 

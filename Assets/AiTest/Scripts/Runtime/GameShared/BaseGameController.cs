@@ -9,11 +9,12 @@ namespace Lumley.AiTest.GameShared
         public GameObject pausePanel;
 
         protected bool isGameActive = false;
-        protected float gameTimer = 0f;
-
+        protected float gameTimer = 0f; // TODO (slumley): When timer reaches max time, end the game (used from difficulty settongs)
+        
         protected virtual void Start()
         {
-            InitializeGame();
+            var currentGameDifficulty = Toolbox.Get<IGameDifficultyManager>().CurrentGameDifficulty;
+            InitializeGame(currentGameDifficulty);
             GameManager.Instance.OnStateChanged += HandleStateChange;
         }
 
@@ -32,7 +33,7 @@ namespace Lumley.AiTest.GameShared
             }
         }
 
-        protected abstract void InitializeGame();
+        protected abstract void InitializeGame(GameManager.Difficulty difficulty);
         protected abstract void UpdateGameplay();
         protected abstract void HandleWin();
         protected abstract void HandleLose();

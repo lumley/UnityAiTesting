@@ -12,10 +12,6 @@ namespace Lumley.AiTest.GameShared
         [Header("Block Jam Settings")] public BlockJamConfig blockJamConfig;
 
         [Header("Color Sort Settings")] public ColorSortConfig colorSortConfig;
-
-        [Header("UI Settings")] public float feedbackDisplayTime = 2f;
-        public Color winColor = Color.green;
-        public Color loseColor = Color.red;
     }
 
     [System.Serializable]

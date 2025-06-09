@@ -15,7 +15,7 @@ namespace Lumley.AiTest.ColorSort
         private int colorCount;
         private int tubeCapacity;
 
-        protected override void InitializeGame()
+        protected override void InitializeGame(GameManager.Difficulty difficulty)
         {
             var config = GameManager.Instance.gameConfig.colorSortConfig;
             tubeCount = config.tubeCount[(int)GameManager.Instance.CurrentDifficulty];

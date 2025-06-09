@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Lumley.AiTest.GameShared
 {
+    [Obsolete("Use Pooling Manager instead")]
     public class ObjectPool<T> : MonoBehaviour where T : Component
     {
         [Header("Pool Settings")] public T prefab;

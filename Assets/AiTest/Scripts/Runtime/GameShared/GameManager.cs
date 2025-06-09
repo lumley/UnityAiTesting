@@ -1,4 +1,5 @@
 using System;
+using Lumley.AiTest.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,6 +7,7 @@ namespace Lumley.AiTest.GameShared
 {
     public class GameManager : MonoBehaviour
     {
+        [Obsolete("Use Toolbox instead")]
         public static GameManager Instance { get; private set; }
 
         [Header("Game Configuration")] public GameConfig gameConfig;
@@ -29,10 +31,10 @@ namespace Lumley.AiTest.GameShared
 
         public enum Difficulty
         {
-            Easy,
-            Medium,
-            Hard,
-            Impossible
+            Easy = 0,
+            Medium = 1,
+            Hard = 2,
+            Impossible = 3
         }
 
         public GameState CurrentState { get; private set; }
@@ -42,27 +44,22 @@ namespace Lumley.AiTest.GameShared
         public event Action<GameState> OnStateChanged;
         public event Action<bool> OnGameCompleted; // true = win, false = fail
 
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
-
-        public void StartMiniGame(MiniGameType gameType, Difficulty difficulty)
+        public async void StartMiniGame(MiniGameType gameType, Difficulty difficulty)
         {
             CurrentMiniGame = gameType;
             CurrentDifficulty = difficulty;
-            SetState(GameState.Playing);
 
             string sceneName = GetSceneName(gameType);
-            SceneManager.LoadScene(sceneName);
+            try
+            {
+                var sceneTransitionManager = Toolbox.Get<ISceneTransitionManager>();
+                await sceneTransitionManager.TransitionToSceneAsync(null); // TODO (slumley): Get the correct reference to the scene
+                SetState(GameState.Playing);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
         }
 
         public void SetState(GameState newState)

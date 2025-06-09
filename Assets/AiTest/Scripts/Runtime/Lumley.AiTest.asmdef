@@ -2,6 +2,10 @@
     "name": "Lumley.AiTest",
     "rootNamespace": "Lumley.AiTest",
     "references": [
+        "DOTween.Modules",
+        "Unity.Addressables",
+        "Unity.InputSystem",
+        "Unity.ResourceManager",
         "Unity.TextMeshPro"
     ],
     "includePlatforms": [],

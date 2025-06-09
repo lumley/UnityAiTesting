@@ -1,5 +1,6 @@
 using Lumley.AiTest.GameShared;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Lumley.AiTest.Tetris
 {
@@ -17,7 +18,7 @@ namespace Lumley.AiTest.Tetris
         private int linesCleared = 0;
         private int targetLines;
 
-        protected override void InitializeGame()
+        protected override void InitializeGame(GameManager.Difficulty difficulty)
         {
             var config = GameManager.Instance.gameConfig.tetrisConfig;
             fallSpeed = config.fallSpeeds[(int)GameManager.Instance.CurrentDifficulty];
@@ -37,17 +38,43 @@ namespace Lumley.AiTest.Tetris
         {
             if (currentPiece == null) return;
 
-            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-                currentPiece.Move(Vector2Int.left, grid);
+            var move = Keyboard.current;
+            if (move != null)
+            {
+                if (move.aKey.wasPressedThisFrame || move.leftArrowKey.wasPressedThisFrame)
+                    currentPiece.Move(Vector2Int.left, grid);
 
-            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-                currentPiece.Move(Vector2Int.right, grid);
+                if (move.dKey.wasPressedThisFrame || move.rightArrowKey.wasPressedThisFrame)
+                    currentPiece.Move(Vector2Int.right, grid);
 
-            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-                fallSpeed *= 10f; // Fast drop
+                if (move.sKey.wasPressedThisFrame || move.downArrowKey.wasPressedThisFrame)
+                    fallSpeed *= 10f; // Fast drop
 
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-                currentPiece.Rotate(grid);
+                if (move.wKey.wasPressedThisFrame || move.upArrowKey.wasPressedThisFrame)
+                    currentPiece.Rotate(grid);
+            }
+
+            // Touch controls for mobile
+            if (Touchscreen.current != null)
+            {
+                var touches = Touchscreen.current.touches;
+                foreach (var touch in touches)
+                {
+                    if (touch.press.wasPressedThisFrame)
+                    {
+                        Vector2 touchPos = touch.position.ReadValue();
+                        // Example: left half = move left, right half = move right, top = rotate, bottom = fast drop
+                        if (touchPos.x < Screen.width * 0.25f)
+                            currentPiece.Move(Vector2Int.left, grid);
+                        else if (touchPos.x > Screen.width * 0.75f)
+                            currentPiece.Move(Vector2Int.right, grid);
+                        else if (touchPos.y > Screen.height * 0.75f)
+                            currentPiece.Rotate(grid);
+                        else if (touchPos.y < Screen.height * 0.25f)
+                            fallSpeed *= 10f;
+                    }
+                }
+            }
         }
 
         private void HandleFalling()

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7879948604108918389}
   - component: {fileID: 6083293730041100852}
   - component: {fileID: 506110564695849619}
+  - component: {fileID: 1182013424795636852}
   m_Layer: 5
   m_Name: LoadingScreen
   m_TagString: Untagged
@@ -103,6 +104,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!225 &1182013424795636852
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406653639576755538}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &724657289605390216
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,6 +337,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2597314307473707034}
   - component: {fileID: 2538401971472396646}
+  - component: {fileID: 7619810614229388542}
   m_Layer: 0
   m_Name: SceneTransitionManager
   m_TagString: Untagged
@@ -359,5 +373,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 416501bb147a439c8ae7eb8e8005d190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transitionPanel: {fileID: 406653639576755538}
-  transitionDuration: 1
+  _transitionPanel: {fileID: 406653639576755538}
+  _fadeInTime: 0.3
+  _fadeOutTime: 0.2
+  _canvasGroup: {fileID: 1182013424795636852}
+--- !u!114 &7619810614229388542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9161703208093175539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eced7a1f30c43ca87bf60ede3d4d70a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
