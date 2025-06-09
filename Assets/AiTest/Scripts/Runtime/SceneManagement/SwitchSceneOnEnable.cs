@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 
 namespace Lumley.AiTest.SceneManagement
@@ -9,8 +10,8 @@ namespace Lumley.AiTest.SceneManagement
     /// </summary>
     public sealed class SwitchSceneOnEnable : MonoBehaviour
     {
-        [SerializeField, Tooltip("Index of the target scene")]
-        private int _sceneIndex = 1;
+        [SerializeField, Tooltip("Target scene to load")]
+        private AssetReference _targetScene = null!;
 
         [SerializeField] private LoadSceneMode _loadSceneMode = LoadSceneMode.Single;
 
@@ -23,7 +24,7 @@ namespace Lumley.AiTest.SceneManagement
         {
             try
             {
-                await SceneManager.LoadSceneAsync(_sceneIndex, _loadSceneMode);
+                await Addressables.LoadSceneAsync(_targetScene, _loadSceneMode).Task;
             }
             catch (Exception e)
             {

@@ -148,7 +148,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e64919a520d43caad648fe1459981c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sceneIndex: 1
+  _targetScene:
+    m_AssetGUID: f6c4f953bc15d4a25b3518eff77d82be
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
   _loadSceneMode: 0
 --- !u!4 &1324787799
 Transform:
