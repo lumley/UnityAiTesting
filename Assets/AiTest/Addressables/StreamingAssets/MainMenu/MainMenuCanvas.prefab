@@ -379,6 +379,13 @@ MonoBehaviour:
   _continueButton: {fileID: 9074393178640669948}
   _newGameButton: {fileID: 6002055625439450027}
   _settingsButton: {fileID: 7227612424125984662}
+  _journeyScene:
+    m_AssetGUID: 23bbe43b3312c4a04953d10f127e7a5e
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  _loadSceneMode: 0
 --- !u!223 &5152806037441995304
 Canvas:
   m_ObjectHideFlags: 0
