@@ -6,7 +6,8 @@
         "Unity.Addressables",
         "Unity.InputSystem",
         "Unity.ResourceManager",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.Timeline"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

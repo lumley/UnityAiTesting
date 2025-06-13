@@ -18,6 +18,23 @@ namespace Lumley.AiTest.GameShared
         public int Seed => throw new NotImplementedException(); // Calculate the current seed as _baseSeed + PlayerDay
         public IReadOnlyList<bool> GameCompletionList => _gameCompletionArray;
 
+        public int CompletedGameCount
+        {
+            get
+            {
+                int gameCompletedCount = 0;
+                foreach (var isGameCompleted in _gameCompletionArray)
+                {
+                    if (isGameCompleted)
+                    {
+                        gameCompletedCount += 1;
+                    }
+                }
+
+                return gameCompletedCount;
+            }
+        }
+
         public void SetGameIndexCompleted(int gameIndex)
         {
             if (gameIndex < 0 || gameIndex >= _gameCompletionArray.Length)

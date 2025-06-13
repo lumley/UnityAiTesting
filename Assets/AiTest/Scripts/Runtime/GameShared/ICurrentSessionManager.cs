@@ -26,6 +26,11 @@ namespace Lumley.AiTest.GameShared
         /// List that maps each index to each game and their completions status (true = completed, false otherwise)
         /// </summary>
         IReadOnlyList<bool> GameCompletionList { get; }
+        
+        /// <summary>
+        /// Gets the amount of completed gmes in the current day, same as checking each game state in <see cref="GameCompletionList"/>
+        /// </summary>
+        int CompletedGameCount { get; }
 
         /// <summary>
         /// On a game completion, sets the given game index as completed
