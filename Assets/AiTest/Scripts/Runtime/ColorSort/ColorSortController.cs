@@ -143,7 +143,7 @@ namespace Lumley.AiTest.ColorSort
                 {
                     GameObject blockObj = new GameObject($"ColorBlock_{colorIndex}_{j}");
                     Block block = blockObj.AddComponent<Block>();
-                    block.Initialize(colors[colorIndex]);
+                    block.Initialize(colors[colorIndex], null!, null!);
                     allBlocks.Add(block);
                 }
             }

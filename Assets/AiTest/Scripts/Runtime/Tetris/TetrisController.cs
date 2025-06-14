@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Lumley.AiTest.GameShared;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,36 +8,45 @@ namespace Lumley.AiTest.Tetris
 {
     public class TetrisController : BaseGameController
     {
-        [Header("Tetris Specific")] [SerializeField]
+        [Header("Tetris Config")] [SerializeField]
         private TetrisGameConfig _config = null!;
 
+        [Header("Utilities")]
         [SerializeField] private PoolingManager poolingManager = null!;
 
         [SerializeField] private LineRenderer _lineRenderer = null!;
 
+        [Header("Camera Settings")]
         [SerializeField] private Camera _camera = null!;
 
         [SerializeField, Tooltip("Percentage of camera margin relative to the board size")] private float _cameraDistanceFactor = 0.1f;
 
         [SerializeField] private Block _referenceBlock = null!;
+        
+        [Header("HUD")]
+        [SerializeField] private TMP_Text _objectiveLinesText = null!;
+        [SerializeField] private TMP_Text _currentLinesText = null!;
 
-        public Transform gridParent;
-        public TetrisPiece[] piecePrefabs;
+        public Transform _gridParent = null!;
+        public TetrisPiece[] _piecePrefabs = {};
 
         private TetrisGrid grid;
-        private TetrisPiece currentPiece;
-        private TetrisPiece nextPiece;
-        private float fallTimer = 0f;
-        private float fallSpeed;
-        private int linesCleared = 0;
-        private int targetLines;
+        private TetrisPiece? currentPiece;
+        private TetrisPiece nextPiece; // TODO (slumley): Create a grid for previews, place there
+        private float _fallTimer;
+        private float _fallSpeed;
+        private int _linesCleared;
+        private int _targetLines;
 
         protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
-            fallSpeed = _config.fallSpeeds[(int)difficulty];
-            targetLines = _config.linesToWin[(int)difficulty];
+            _fallSpeed = _config.fallSpeeds[(int)difficulty];
+            _targetLines = _config.linesToWin[(int)difficulty];
 
-            grid = new TetrisGrid(_config.gridWidth, _config.gridHeight);
+            _currentLinesText.text = "0";
+            _objectiveLinesText.text = _targetLines.ToString();
+
+            grid = new TetrisGrid(_config.gridWidth, _config.gridHeight, _gridParent);
             var blockSize = _referenceBlock.GetBounds().size;
             var originalCameraPositionZ = _camera.transform.position.z;
             _camera.transform.position = new Vector3(+_config.gridWidth * blockSize.x / 2f,
@@ -96,7 +106,7 @@ namespace Lumley.AiTest.Tetris
 
                 if (move.sKey.wasPressedThisFrame || move.downArrowKey.wasPressedThisFrame)
                 {
-                    fallTimer += fallSpeed; // Fast drop
+                    _fallTimer += _fallSpeed; // Fast drop
                 }
 
                 if (move.wKey.wasPressedThisFrame || move.upArrowKey.wasPressedThisFrame)
@@ -122,7 +132,7 @@ namespace Lumley.AiTest.Tetris
                         else if (touchPos.y > Screen.height * 0.75f)
                             currentPiece.Rotate(grid);
                         else if (touchPos.y < Screen.height * 0.25f)
-                            fallSpeed *= 10f;
+                            _fallSpeed *= 10f;
                     }
                 }
             }
@@ -130,9 +140,9 @@ namespace Lumley.AiTest.Tetris
 
         private void HandleFalling()
         {
-            fallTimer += Time.deltaTime;
+            _fallTimer += Time.deltaTime;
 
-            if (fallTimer >= fallSpeed)
+            if (_fallTimer >= _fallSpeed)
             {
                 if (currentPiece != null && !currentPiece.Move(Vector2Int.down, grid))
                 {
@@ -141,37 +151,43 @@ namespace Lumley.AiTest.Tetris
                     SpawnNewPiece();
                 }
 
-                fallTimer = 0f;
+                _fallTimer = 0f;
             }
         }
 
         private void SpawnNewPiece()
         {
             if (nextPiece == null)
-                nextPiece = Instantiate(piecePrefabs[Random.Range(0, piecePrefabs.Length)], gridParent);
+                nextPiece = Instantiate(_piecePrefabs[Random.Range(0, _piecePrefabs.Length)], _gridParent);
 
             currentPiece = nextPiece;
-            nextPiece = Instantiate(piecePrefabs[Random.Range(0, piecePrefabs.Length)], gridParent);
+            nextPiece = Instantiate(_piecePrefabs[Random.Range(0, _piecePrefabs.Length)], _gridParent);
 
             currentPiece.Initialize(new Vector2Int(5, 18), poolingManager);
         }
 
         private void PlacePiece()
         {
-            if (!currentPiece.IsValidPosition(grid))
+            var isCurrentPieceNull = currentPiece == null;
+            if (isCurrentPieceNull || !currentPiece!.IsValidPosition(grid))
             {
                 HandleLose();
             }
-            currentPiece.PlaceOnGrid(grid);
+
+            if (!isCurrentPieceNull)
+            {
+                currentPiece!.PlaceOnGrid(grid);
+            }
             currentPiece = null;
         }
 
         private void CheckLines()
         {
             int clearedThisTurn = grid.ClearCompletedLines();
-            linesCleared += clearedThisTurn;
+            _linesCleared += clearedThisTurn;
+            _currentLinesText.text = _linesCleared.ToString();
 
-            if (linesCleared >= targetLines)
+            if (_linesCleared >= _targetLines)
             {
                 HandleWin();
             }

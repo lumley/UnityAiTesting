@@ -11,11 +11,14 @@ namespace Lumley.AiTest.GameShared
         [SerializeField] private SpriteRenderer _spriteRenderer = null!;
         
         public Color BlockColor; // TODO (slumley): Color is only used for color sort, give the sprite some sort of index so it can be checked in that game
+        private PoolingManager? _poolingManager;
+        private GameObject? _ownPrefab;
 
-        public void Initialize(Color color)
+        public void Initialize(Color color, PoolingManager pool, GameObject ownPrefab)
         {
             BlockColor = color;
-            // TODO (slumley): Remove this? Keep at the moment to find usages in other games
+            _poolingManager = pool;
+            _ownPrefab = ownPrefab;
         }
 
         public Bounds GetBounds()
@@ -25,8 +28,14 @@ namespace Lumley.AiTest.GameShared
 
         public void OnBlockDestroyed()
         {
-            // TODO (slumley): No! Receive the pool and return itself here
-            Destroy(gameObject);
+            if (_poolingManager != null && _ownPrefab != null)
+            {
+                _poolingManager.Recycle(_ownPrefab, gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

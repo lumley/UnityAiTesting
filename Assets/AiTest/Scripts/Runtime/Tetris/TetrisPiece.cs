@@ -6,7 +6,7 @@ namespace Lumley.AiTest.Tetris
     public class TetrisPiece : MonoBehaviour
     {
         [Header("Piece Configuration")] [SerializeField]
-        private Vector2Int[] _blockPositions;
+        private Vector2Int[] _blockPositions = { };
 
         [SerializeField] private Block _blockPrefab = null!;
 
@@ -24,7 +24,7 @@ namespace Lumley.AiTest.Tetris
                 block.gameObject.name = $"Block_{i}";
 
                 blocks[i] = block;
-                blocks[i].Initialize(Color.white);
+                blocks[i].Initialize(Color.white, pool, _blockPrefab.gameObject);
 
                 UpdateBlockPosition(i);
             }
@@ -96,8 +96,11 @@ namespace Lumley.AiTest.Tetris
             {
                 Vector2Int worldPos = position + _blockPositions[i];
                 grid.SetBlock(worldPos, blocks[i]);
-                blocks[i].transform.SetParent(null); // Remove from piece hierarchy
+                blocks[i].transform.SetParent(grid.GridParent, worldPositionStays: true); // Remove from piece
             }
+
+            // TODO (slumley): Use pooling for the grid
+            Destroy(gameObject); // Destroy the piece after placing it on the grid
         }
 
         private void UpdateAllBlockPositions()

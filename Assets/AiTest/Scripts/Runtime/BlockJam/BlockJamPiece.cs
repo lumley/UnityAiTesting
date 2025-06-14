@@ -35,7 +35,7 @@ namespace Lumley.AiTest.BlockJam
                     blockObj.transform.SetParent(transform);
 
                     Block block = blockObj.AddComponent<Block>();
-                    block.Initialize(pieceColor);
+                    block.Initialize(pieceColor, null!, null!);
 
                     blocks[x * size.y + y] = block;
                     block.transform.localPosition = new Vector3(x, y, 0);
