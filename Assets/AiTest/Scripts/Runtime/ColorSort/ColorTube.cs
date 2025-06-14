@@ -69,7 +69,7 @@ namespace Lumley.AiTest.ColorSort
         public Color GetTopColor()
         {
             if (blocks.Count > 0)
-                return blocks[blocks.Count - 1].blockColor;
+                return blocks[blocks.Count - 1].BlockColor;
             return Color.clear;
         }
 
@@ -78,7 +78,7 @@ namespace Lumley.AiTest.ColorSort
             int count = 0;
             for (int i = blocks.Count - 1; i >= 0; i--)
             {
-                if (blocks[i].blockColor == color)
+                if (blocks[i].BlockColor == color)
                     count++;
                 else
                     break;
@@ -99,8 +99,8 @@ namespace Lumley.AiTest.ColorSort
         {
             if (blocks.Count == 0) return true;
 
-            Color firstColor = blocks[0].blockColor;
-            return blocks.All(block => block.blockColor == firstColor);
+            Color firstColor = blocks[0].BlockColor;
+            return blocks.All(block => block.BlockColor == firstColor);
         }
 
         public bool ContainsPoint(Vector2 worldPoint)

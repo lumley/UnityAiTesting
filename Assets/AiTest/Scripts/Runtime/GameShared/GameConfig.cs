@@ -1,26 +1,18 @@
+using System;
+
 namespace Lumley.AiTest.GameShared
 {
     using UnityEngine;
 
+    [Obsolete("Create game configs for each game instead of using this global config.")]
     [CreateAssetMenu(fileName = "GameConfig", menuName = "Game/Config")]
     public class GameConfig : ScriptableObject
     {
-        [Header("Tetris Settings")] public TetrisConfig tetrisConfig;
-
         [Header("Woodoku Settings")] public WoodokuConfig woodokuConfig;
 
         [Header("Block Jam Settings")] public BlockJamConfig blockJamConfig;
 
         [Header("Color Sort Settings")] public ColorSortConfig colorSortConfig;
-    }
-
-    [System.Serializable]
-    public class TetrisConfig
-    {
-        public float[] fallSpeeds = { 1f, 0.7f, 0.4f, 0.2f }; // Easy to Impossible
-        public int[] linesToWin = { 5, 10, 20, 40 };
-        public int gridWidth = 10;
-        public int gridHeight = 20;
     }
 
     [System.Serializable]

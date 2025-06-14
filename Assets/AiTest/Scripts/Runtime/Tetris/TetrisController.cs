@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Lumley.AiTest.GameShared;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -6,8 +7,18 @@ namespace Lumley.AiTest.Tetris
 {
     public class TetrisController : BaseGameController
     {
-        [Header("Tetris Specific")] public Transform gridParent;
-        public BlockPool blockPool;
+        [Header("Tetris Specific")] [SerializeField]
+        private TetrisGameConfig _config = null!;
+
+        [SerializeField] private PoolingManager poolingManager = null!;
+
+        [SerializeField] private LineRenderer _lineRenderer = null!;
+
+        [SerializeField] private Camera _camera = null!;
+
+        [SerializeField] private Block _referenceBlock = null!;
+
+        public Transform gridParent;
         public TetrisPiece[] piecePrefabs;
 
         private TetrisGrid grid;
@@ -18,20 +29,61 @@ namespace Lumley.AiTest.Tetris
         private int linesCleared = 0;
         private int targetLines;
 
-        protected override void InitializeGame(GameManager.Difficulty difficulty)
+        protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
-            var config = GameManager.Instance.gameConfig.tetrisConfig;
-            fallSpeed = config.fallSpeeds[(int)GameManager.Instance.CurrentDifficulty];
-            targetLines = config.linesToWin[(int)GameManager.Instance.CurrentDifficulty];
+            fallSpeed = _config.fallSpeeds[(int)difficulty];
+            targetLines = _config.linesToWin[(int)difficulty];
 
-            grid = new TetrisGrid(config.gridWidth, config.gridHeight);
+            grid = new TetrisGrid(_config.gridWidth, _config.gridHeight);
+            var blockSize = _referenceBlock.GetBounds().size;
+            var originalCameraPositionZ = _camera.transform.position.z;
+            _camera.transform.position = new Vector3(+_config.gridWidth * blockSize.x / 2f,
+                +_config.gridHeight * blockSize.y / 2f, originalCameraPositionZ);
+            _camera.orthographicSize = Mathf.Max(_config.gridWidth * blockSize.x, _config.gridHeight * blockSize.y) / 2f;
+
             SpawnNewPiece();
+            DrawGrid();
+            return Task.CompletedTask;
+        }
+
+        private void DrawGrid()
+        {
+            _lineRenderer.positionCount = (_config.gridWidth + 1) * 2 + (_config.gridHeight + 1) * 2;
+            int idx = 0;
+            var blockSize = _referenceBlock.GetBounds().size;
+            var blockWidth = blockSize.x;
+            var blockHeight = blockSize.y;
+
+            // Vertical lines
+            for (int x = 0; x <= _config.gridWidth; x++)
+            {
+                _lineRenderer.SetPosition(idx++, new Vector3(x * blockWidth, 0, 0));
+                _lineRenderer.SetPosition(idx++, new Vector3(x * blockWidth, _config.gridHeight * blockHeight, 0));
+            }
+
+            // Horizontal lines
+            for (int y = 0; y <= _config.gridHeight; y++)
+            {
+                _lineRenderer.SetPosition(idx++, new Vector3(0, y * blockHeight, 0));
+                _lineRenderer.SetPosition(idx++, new Vector3(_config.gridWidth * blockWidth, y * blockHeight, 0));
+            }
         }
 
         protected override void UpdateGameplay()
         {
             HandleInput();
             HandleFalling();
+        }
+
+        protected override void HandleWin()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void HandleLose()
+        {
+            // TODO (slumley): Implement game over logic
+            Debug.Log("Game Over! You lost.", this);
         }
 
         private void HandleInput()
@@ -97,12 +149,12 @@ namespace Lumley.AiTest.Tetris
         private void SpawnNewPiece()
         {
             if (nextPiece == null)
-                nextPiece = Instantiate(piecePrefabs[Random.Range(0, piecePrefabs.Length)]);
+                nextPiece = Instantiate(piecePrefabs[Random.Range(0, piecePrefabs.Length)], gridParent);
 
             currentPiece = nextPiece;
-            nextPiece = Instantiate(piecePrefabs[Random.Range(0, piecePrefabs.Length)]);
+            nextPiece = Instantiate(piecePrefabs[Random.Range(0, piecePrefabs.Length)], gridParent);
 
-            currentPiece.Initialize(new Vector2Int(5, 18), blockPool);
+            currentPiece.Initialize(new Vector2Int(5, 18), poolingManager);
 
             if (!currentPiece.IsValidPosition(grid))
             {
@@ -125,18 +177,6 @@ namespace Lumley.AiTest.Tetris
             {
                 HandleWin();
             }
-        }
-
-        protected override void HandleWin()
-        {
-            winPanel?.SetActive(true);
-            GameManager.Instance.CompleteGame(true);
-        }
-
-        protected override void HandleLose()
-        {
-            losePanel?.SetActive(true);
-            GameManager.Instance.CompleteGame(false);
         }
     }
 }

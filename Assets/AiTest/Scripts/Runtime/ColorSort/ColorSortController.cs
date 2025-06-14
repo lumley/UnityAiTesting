@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lumley.AiTest.GameShared;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace Lumley.AiTest.ColorSort
         private int colorCount;
         private int tubeCapacity;
 
-        protected override void InitializeGame(GameManager.Difficulty difficulty)
+        protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
             var config = GameManager.Instance.gameConfig.colorSortConfig;
             tubeCount = config.tubeCount[(int)GameManager.Instance.CurrentDifficulty];
@@ -23,6 +24,8 @@ namespace Lumley.AiTest.ColorSort
             tubeCapacity = config.tubeCapacity;
 
             GeneratePuzzle();
+            // TODO (slumley): Here we'd show an initialization
+            return Task.CompletedTask;
         }
 
         protected override void UpdateGameplay()
@@ -141,7 +144,7 @@ namespace Lumley.AiTest.ColorSort
                 {
                     GameObject blockObj = new GameObject($"ColorBlock_{colorIndex}_{j}");
                     Block block = blockObj.AddComponent<Block>();
-                    block.Initialize(Block.BlockType.Standard, colors[colorIndex]);
+                    block.Initialize(colors[colorIndex]);
                     allBlocks.Add(block);
                 }
             }
@@ -202,14 +205,12 @@ namespace Lumley.AiTest.ColorSort
 
         protected override void HandleWin()
         {
-            winPanel?.SetActive(true);
-            GameManager.Instance.CompleteGame(true);
+            throw new System.NotImplementedException();
         }
 
         protected override void HandleLose()
         {
-            losePanel?.SetActive(true);
-            GameManager.Instance.CompleteGame(false);
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Lumley.AiTest.Journey
     public sealed class GameJourney
     {
         public GameInfo GameInfo = null!;
-        public GameManager.Difficulty Difficulty;
+        public GameDifficulty Difficulty;
         public int GameIndex;
         public bool IsCompleted;
     }

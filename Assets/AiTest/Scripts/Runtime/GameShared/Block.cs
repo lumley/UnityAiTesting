@@ -1,48 +1,31 @@
+using UnityEngine;
+
 namespace Lumley.AiTest.GameShared
 {
-    using UnityEngine;
-
-    public class Block : MonoBehaviour
+    /// <summary>
+    /// A single block (a square) in any game.
+    /// </summary>
+    [RequireComponent(typeof(SpriteRenderer))]
+    public sealed class Block : MonoBehaviour
     {
-        [Header("Block Properties")] public BlockType blockType;
-        public Color blockColor = Color.white;
-        public bool isMovable = true;
+        [SerializeField] private SpriteRenderer _spriteRenderer = null!;
+        
+        public Color BlockColor; // TODO (slumley): Color is only used for color sort, give the sprite some sort of index so it can be checked in that game
 
-        private SpriteRenderer spriteRenderer;
-        private Rigidbody2D rb;
-
-        public enum BlockType
+        public void Initialize(Color color)
         {
-            Standard,
-            Special,
-            Obstacle
+            BlockColor = color;
+            // TODO (slumley): Remove this? Keep at the moment to find usages in other games
         }
 
-        private void Awake()
+        public Bounds GetBounds()
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-            rb = GetComponent<Rigidbody2D>();
-
-            if (spriteRenderer != null)
-                spriteRenderer.color = blockColor;
+            return _spriteRenderer.sprite.bounds;
         }
 
-        public virtual void Initialize(BlockType type, Color color, bool movable = true)
+        public void OnBlockDestroyed()
         {
-            blockType = type;
-            blockColor = color;
-            isMovable = movable;
-
-            if (spriteRenderer != null)
-                spriteRenderer.color = color;
-
-            if (rb != null)
-                rb.isKinematic = !movable;
-        }
-
-        public virtual void OnBlockDestroyed()
-        {
-            // Override in derived classes for special effects
+            // TODO (slumley): No! Receive the pool and return itself here
             Destroy(gameObject);
         }
     }

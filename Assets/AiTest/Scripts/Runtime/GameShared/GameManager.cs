@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace Lumley.AiTest.GameShared
 {
+    [Obsolete("Merge what's useful into BaseGameController and remove this class")]
     public class GameManager : MonoBehaviour
     {
         [Obsolete("Use Toolbox instead")]
@@ -29,27 +30,18 @@ namespace Lumley.AiTest.GameShared
             ColorSort
         }
 
-        public enum Difficulty
-        {
-            Easy = 0,
-            Medium = 1,
-            Hard = 2,
-            Impossible = 3
-        }
-
         public GameState CurrentState { get; private set; }
         public MiniGameType CurrentMiniGame { get; private set; }
-        public Difficulty CurrentDifficulty { get; private set; }
+        public GameDifficulty CurrentDifficulty { get; private set; }
 
         public event Action<GameState> OnStateChanged;
         public event Action<bool> OnGameCompleted; // true = win, false = fail
 
-        public async void StartMiniGame(MiniGameType gameType, Difficulty difficulty)
+        public async void StartMiniGame(MiniGameType gameType, GameDifficulty difficulty)
         {
             CurrentMiniGame = gameType;
             CurrentDifficulty = difficulty;
 
-            string sceneName = GetSceneName(gameType);
             try
             {
                 var sceneTransitionManager = Toolbox.Get<ISceneTransitionManager>();
@@ -83,18 +75,6 @@ namespace Lumley.AiTest.GameShared
         {
             SetState(GameState.Menu);
             SceneManager.LoadScene("MainMenu");
-        }
-
-        private string GetSceneName(MiniGameType gameType)
-        {
-            return gameType switch
-            {
-                MiniGameType.Tetris => "TetrisScene",
-                MiniGameType.Woodoku => "WoodokuScene",
-                MiniGameType.BlockJam => "BlockJamScene",
-                MiniGameType.ColorSort => "ColorSortScene",
-                _ => "MainMenu"
-            };
         }
     }
 }

@@ -40,7 +40,7 @@ namespace Lumley.AiTest.Woodoku
                     // Create and place block
                     GameObject blockObj = new GameObject("GridBlock");
                     Block block = blockObj.AddComponent<Block>();
-                    block.Initialize(Block.BlockType.Standard, piece.GetColor());
+                    block.Initialize(piece.GetColor());
 
                     grid[finalPos.x, finalPos.y] = block;
                     block.transform.position = GridToWorld(finalPos);

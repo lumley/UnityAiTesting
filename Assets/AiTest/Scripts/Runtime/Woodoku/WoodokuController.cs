@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lumley.AiTest.GameShared;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Lumley.AiTest.Woodoku
 {
@@ -16,7 +19,7 @@ namespace Lumley.AiTest.Woodoku
         private int targetScore;
         private int piecesRemaining;
 
-        protected override void InitializeGame(GameManager.Difficulty difficulty)
+        protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
             var config = GameManager.Instance.gameConfig.woodokuConfig;
             targetScore = config.targetScores[(int)GameManager.Instance.CurrentDifficulty];
@@ -24,6 +27,8 @@ namespace Lumley.AiTest.Woodoku
 
             grid = new WoodokuGrid(config.gridSize);
             SpawnNewPieces();
+            // TODO (slumley): Here we'd show an initialization
+            return Task.CompletedTask;
         }
 
         protected override void UpdateGameplay()
@@ -115,14 +120,12 @@ namespace Lumley.AiTest.Woodoku
 
         protected override void HandleWin()
         {
-            winPanel?.SetActive(true);
-            GameManager.Instance.CompleteGame(true);
+            throw new NotImplementedException();
         }
 
         protected override void HandleLose()
         {
-            losePanel?.SetActive(true);
-            GameManager.Instance.CompleteGame(false);
+            throw new NotImplementedException();
         }
     }
 }

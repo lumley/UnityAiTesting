@@ -44,9 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bc670d7e4bb4e93aeea31163bf1b6c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockPositions:
+  _blockPositions:
   - {x: 1, y: 2}
   - {x: 1, y: 1}
   - {x: 1, y: 0}
   - {x: 0, y: 0}
-  pieceColor: {r: 1, g: 1, b: 1, a: 1}
+  _blockPrefab: {fileID: 5492075600329362173, guid: 606967182dec54895ad6c24c3095035c, type: 3}

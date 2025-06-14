@@ -24,7 +24,7 @@ namespace Lumley.AiTest.Woodoku
                 blockObj.transform.localPosition = new Vector3(pos.x, pos.y, 0);
 
                 Block block = blockObj.AddComponent<Block>();
-                block.Initialize(Block.BlockType.Standard, pieceColor);
+                block.Initialize(pieceColor);
             }
         }
 

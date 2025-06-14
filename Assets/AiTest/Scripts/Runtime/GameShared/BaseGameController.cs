@@ -1,86 +1,105 @@
+using System;
+using System.Threading.Tasks;
+using Lumley.AiTest.ComponentUtilities;
+using Lumley.AiTest.SceneManagement;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Lumley.AiTest.GameShared
 {
     public abstract class BaseGameController : MonoBehaviour
     {
-        [Header("Base Game Settings")] public GameObject winPanel;
-        public GameObject losePanel;
-        public GameObject pausePanel;
-
-        protected bool isGameActive = false;
+        [Header("Base Game Settings")] private GameObject _winPanel;
+        private GameObject _losePanel;
+        private GameObject _pausePanel;
+        
+        [SerializeField]
+        private TimelineController? _introductionTimeline;
+        
+        [SerializeField]
+        private AssetReference _mainMenuScene = null!;
+        
         protected float gameTimer = 0f; // TODO (slumley): When timer reaches max time, end the game (used from difficulty settongs)
         
-        protected virtual void Start()
+        protected GameState State;
+        
+        protected async void Start()
         {
-            var currentGameDifficulty = Toolbox.Get<ICurrentGameInfoManager>().CurrentGameDifficulty;
-            InitializeGame(currentGameDifficulty);
-            GameManager.Instance.OnStateChanged += HandleStateChange;
-        }
-
-        protected virtual void OnDestroy()
-        {
-            if (GameManager.Instance != null)
-                GameManager.Instance.OnStateChanged -= HandleStateChange;
+            try
+            {
+                State = GameState.IsInitializing;
+                var currentGameInfoManager = Toolbox.Get<ICurrentGameInfoManager>();
+                var currentGameDifficulty = currentGameInfoManager.CurrentGameDifficulty;
+                await InitializeGameAsync(currentGameDifficulty);
+                if (_introductionTimeline != null)
+                {
+                    await _introductionTimeline.PlayTimelineAsync();
+                }
+                State = GameState.IsPlaying;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
         }
 
         protected virtual void Update()
         {
-            if (isGameActive)
+            if (State == GameState.IsPlaying)
             {
                 gameTimer += Time.deltaTime;
                 UpdateGameplay();
             }
         }
 
-        protected abstract void InitializeGame(GameManager.Difficulty difficulty);
+        protected abstract Task InitializeGameAsync(GameDifficulty difficulty);
         protected abstract void UpdateGameplay();
         protected abstract void HandleWin();
         protected abstract void HandleLose();
 
-        protected virtual void HandleStateChange(GameManager.GameState newState)
+        protected void PauseGame()
         {
-            isGameActive = newState == GameManager.GameState.Playing;
+            State = GameState.IsPaused;
+            _pausePanel.SetActive(true);
+        }
 
-            switch (newState)
+        protected void ResumeGame()
+        {
+            State = GameState.IsPlaying;
+            _pausePanel.SetActive(false);
+        }
+
+        protected void EndGame()
+        {
+            State = GameState.IsGameFinished;
+        }
+
+        protected async void RestartGame()
+        {
+            try
             {
-                case GameManager.GameState.Playing:
-                    ResumeGame();
-                    break;
-                case GameManager.GameState.Paused:
-                    PauseGame();
-                    break;
-                case GameManager.GameState.Result:
-                    EndGame();
-                    break;
+                State = GameState.IsPaused;
+                var currentGameInfoManager = Toolbox.Get<ICurrentGameInfoManager>();
+                AssetReference currentGameAsset = _mainMenuScene;
+                if (currentGameInfoManager.CurrentGameAsset != null)
+                {
+                    currentGameAsset = currentGameInfoManager.CurrentGameAsset;
+                }
+                var sceneTransitionManager = Toolbox.Get<ISceneTransitionManager>();
+                await sceneTransitionManager.TransitionToSceneAsync(currentGameAsset);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
             }
         }
-
-        protected virtual void PauseGame()
+        
+        protected enum GameState
         {
-            Time.timeScale = 0f;
-            pausePanel?.SetActive(true);
-        }
-
-        protected virtual void ResumeGame()
-        {
-            Time.timeScale = 1f;
-            pausePanel?.SetActive(false);
-        }
-
-        protected virtual void EndGame()
-        {
-            isGameActive = false;
-        }
-
-        public virtual void RestartGame()
-        {
-            GameManager.Instance.RestartCurrentGame();
-        }
-
-        public virtual void ReturnToMenu()
-        {
-            GameManager.Instance.ReturnToMenu();
+            IsInitializing,
+            IsPlaying,
+            IsPaused,
+            IsGameFinished
         }
     }
 }

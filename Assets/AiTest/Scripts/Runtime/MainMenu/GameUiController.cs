@@ -23,13 +23,6 @@ namespace Lumley.AiTest.MainMenu
         private void Start()
         {
             SetupButtons();
-            GameManager.Instance.OnGameCompleted += ShowFeedback;
-        }
-
-        private void OnDestroy()
-        {
-            if (GameManager.Instance != null)
-                GameManager.Instance.OnGameCompleted -= ShowFeedback;
         }
 
         private void SetupButtons()

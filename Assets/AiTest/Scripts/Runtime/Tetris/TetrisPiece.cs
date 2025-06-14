@@ -5,37 +5,26 @@ namespace Lumley.AiTest.Tetris
 {
     public class TetrisPiece : MonoBehaviour
     {
-        [Header("Piece Configuration")] public Vector2Int[] blockPositions;
-        public Color pieceColor = Color.white;
+        [Header("Piece Configuration")] [SerializeField]
+        private Vector2Int[] _blockPositions;
+
+        [SerializeField] private Block _blockPrefab = null!;
 
         private Vector2Int position;
-        private Block[] blocks;
-        private ObjectPool<Block> blockPool;
+        private Block[] blocks = { };
 
-        public void Initialize(Vector2Int startPos, ObjectPool<Block> pool)
+        public void Initialize(Vector2Int startPos, PoolingManager pool)
         {
             position = startPos;
-            blockPool = pool;
 
-            blocks = new Block[blockPositions.Length];
-            for (int i = 0; i < blockPositions.Length; i++)
+            blocks = new Block[_blockPositions.Length];
+            for (int i = 0; i < _blockPositions.Length; i++)
             {
-                Block block;
-                if (blockPool != null)
-                {
-                    block = blockPool.GetObject();
-                    block.gameObject.name = $"Block_{i}";
-                    block.transform.SetParent(transform);
-                }
-                else
-                {
-                    GameObject blockObj = new GameObject($"Block_{i}");
-                    blockObj.transform.SetParent(transform);
-                    block = blockObj.AddComponent<Block>();
-                }
+                var block = pool.GetOrCreate(_blockPrefab, transform);
+                block.gameObject.name = $"Block_{i}";
 
                 blocks[i] = block;
-                blocks[i].Initialize(Block.BlockType.Standard, pieceColor);
+                blocks[i].Initialize(Color.white);
 
                 UpdateBlockPosition(i);
             }
@@ -58,16 +47,16 @@ namespace Lumley.AiTest.Tetris
         public void Rotate(TetrisGrid grid)
         {
             // Simple 90-degree rotation
-            Vector2Int[] rotatedPositions = new Vector2Int[blockPositions.Length];
+            Vector2Int[] rotatedPositions = new Vector2Int[_blockPositions.Length];
 
-            for (int i = 0; i < blockPositions.Length; i++)
+            for (int i = 0; i < _blockPositions.Length; i++)
             {
-                rotatedPositions[i] = new Vector2Int(-blockPositions[i].y, blockPositions[i].x);
+                rotatedPositions[i] = new Vector2Int(-_blockPositions[i].y, _blockPositions[i].x);
             }
 
             if (IsValidRotation(rotatedPositions, grid))
             {
-                blockPositions = rotatedPositions;
+                _blockPositions = rotatedPositions;
                 UpdateAllBlockPositions();
             }
         }
@@ -79,7 +68,7 @@ namespace Lumley.AiTest.Tetris
 
         private bool IsValidPosition(Vector2Int pos, TetrisGrid grid)
         {
-            foreach (var blockPos in blockPositions)
+            foreach (var blockPos in _blockPositions)
             {
                 Vector2Int worldPos = pos + blockPos;
                 if (!grid.IsValidPosition(worldPos))
@@ -105,7 +94,7 @@ namespace Lumley.AiTest.Tetris
         {
             for (int i = 0; i < blocks.Length; i++)
             {
-                Vector2Int worldPos = position + blockPositions[i];
+                Vector2Int worldPos = position + _blockPositions[i];
                 grid.SetBlock(worldPos, blocks[i]);
                 blocks[i].transform.SetParent(null); // Remove from piece hierarchy
             }
@@ -121,8 +110,11 @@ namespace Lumley.AiTest.Tetris
 
         private void UpdateBlockPosition(int blockIndex)
         {
-            Vector2Int worldPos = position + blockPositions[blockIndex];
-            blocks[blockIndex].transform.position = new Vector3(worldPos.x, worldPos.y, 0);
+            Vector2Int logicalPos = position + _blockPositions[blockIndex];
+            var block = blocks[blockIndex];
+            var blockBounds = block.GetBounds();
+            var size = blockBounds.size;
+            block.transform.position = new Vector3(logicalPos.x * size.x, logicalPos.y * size.y, 0);
         }
     }
 }

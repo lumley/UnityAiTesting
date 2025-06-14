@@ -112,6 +112,7 @@ namespace Lumley.AiTest.Journey
                 var gameInfoManager = Toolbox.Get<ICurrentGameInfoManager>();
                 gameInfoManager.CurrentGameDifficulty = gameJourney.Difficulty;
                 gameInfoManager.CurrentGameIndex = gameJourney.GameIndex;
+                gameInfoManager.CurrentGameAsset = gameJourney.GameInfo.Scene;
 
                 var sceneTransitionManager = Toolbox.Get<ISceneTransitionManager>();
                 await sceneTransitionManager.TransitionToSceneAsync(gameJourney.GameInfo.Scene, _loadSceneMode);

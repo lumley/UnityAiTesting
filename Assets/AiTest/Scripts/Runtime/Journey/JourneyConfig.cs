@@ -22,12 +22,12 @@ namespace Lumley.AiTest.Journey
         [SerializeField,
          Tooltip(
              "The difficulty levels available. Can be arranged or repeated, maps will receive each difficulty in the order of appearance")]
-        private GameManager.Difficulty[] _availableDifficultyLevels =
+        private GameDifficulty[] _availableDifficultyLevels =
         {
-            GameManager.Difficulty.Easy,
-            GameManager.Difficulty.Medium,
-            GameManager.Difficulty.Hard,
-            GameManager.Difficulty.Impossible
+            GameDifficulty.Easy,
+            GameDifficulty.Medium,
+            GameDifficulty.Hard,
+            GameDifficulty.Impossible
         };
         
         [SerializeField, Tooltip("Color map for each difficulty level")]
@@ -83,9 +83,9 @@ namespace Lumley.AiTest.Journey
         /// <summary>
         /// Gets the color for a given difficulty level
         /// </summary>
-        /// <param name="difficulty"><see cref="GameManager.Difficulty"/> to test</param>
+        /// <param name="difficulty"><see cref="GameDifficulty"/> to test</param>
         /// <returns><see cref="Color"/> with the difficulty</returns>
-        public Color GetColorForDifficulty(GameManager.Difficulty difficulty)
+        public Color GetColorForDifficulty(GameDifficulty difficulty)
         {
             foreach (var difficultyColorMap in _difficultyColorMaps)
             {
@@ -104,7 +104,7 @@ namespace Lumley.AiTest.Journey
         [Serializable]
         public sealed class DifficultyColorMap
         {
-            public GameManager.Difficulty Difficulty;
+            public GameDifficulty Difficulty;
             public Color Color;
         }
     }

@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lumley.AiTest.GameShared;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Lumley.AiTest.BlockJam
 {
@@ -17,13 +20,15 @@ namespace Lumley.AiTest.BlockJam
         private int maxMoves;
         private BlockJamPiece selectedPiece;
 
-        protected override void InitializeGame(GameManager.Difficulty difficulty)
+        protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
             var config = GameManager.Instance.gameConfig.blockJamConfig;
             maxMoves = config.movesToWin[(int)GameManager.Instance.CurrentDifficulty];
 
             grid = new BlockJamGrid(config.gridWidth, config.gridHeight);
             GeneratePuzzle(config.obstacleCount[(int)GameManager.Instance.CurrentDifficulty]);
+            // TODO (slumley): Here we'd show an initialization
+            return Task.CompletedTask;
         }
 
         protected override void UpdateGameplay()
@@ -158,14 +163,12 @@ namespace Lumley.AiTest.BlockJam
 
         protected override void HandleWin()
         {
-            winPanel?.SetActive(true);
-            GameManager.Instance.CompleteGame(true);
+            throw new NotImplementedException();
         }
 
         protected override void HandleLose()
         {
-            losePanel?.SetActive(true);
-            GameManager.Instance.CompleteGame(false);
+            throw new NotImplementedException();
         }
     }
 }

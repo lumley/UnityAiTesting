@@ -12,9 +12,9 @@ namespace Lumley.AiTest.GameShared
     {
         private readonly Dictionary<GameObject, Stack<GameObject>> _prefabToObjectMap = new();
 
-        public T Create<T>(T prefab, Transform? onTransform = null) where T : MonoBehaviour
+        public T GetOrCreate<T>(T prefab, Transform? onTransform = null) where T : MonoBehaviour
         {
-            GameObject? instance = Create(prefab.gameObject, onTransform);
+            GameObject? instance = GetOrCreate(prefab.gameObject, onTransform);
             if (instance != null)
             {
                 var cmp = instance.GetComponent<T>();
@@ -30,7 +30,7 @@ namespace Lumley.AiTest.GameShared
             throw new InvalidOperationException($"Prefab could not be instantiated from {prefab.name}");
         }
 
-        public GameObject Create(GameObject prefab, Transform? onTransform = null)
+        public GameObject GetOrCreate(GameObject prefab, Transform? onTransform = null)
         {
             if (_prefabToObjectMap.TryGetValue(prefab, out Stack<GameObject> pool))
             {
