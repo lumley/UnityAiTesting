@@ -16,6 +16,8 @@ namespace Lumley.AiTest.Tetris
 
         [SerializeField] private Camera _camera = null!;
 
+        [SerializeField, Tooltip("Percentage of camera margin relative to the board size")] private float _cameraDistanceFactor = 0.1f;
+
         [SerializeField] private Block _referenceBlock = null!;
 
         public Transform gridParent;
@@ -39,7 +41,7 @@ namespace Lumley.AiTest.Tetris
             var originalCameraPositionZ = _camera.transform.position.z;
             _camera.transform.position = new Vector3(+_config.gridWidth * blockSize.x / 2f,
                 +_config.gridHeight * blockSize.y / 2f, originalCameraPositionZ);
-            _camera.orthographicSize = Mathf.Max(_config.gridWidth * blockSize.x, _config.gridHeight * blockSize.y) / 2f;
+            _camera.orthographicSize = Mathf.Max(_config.gridWidth * blockSize.x, _config.gridHeight * blockSize.y) * (0.5f + _cameraDistanceFactor);
 
             SpawnNewPiece();
             DrawGrid();
@@ -57,15 +59,15 @@ namespace Lumley.AiTest.Tetris
             // Vertical lines
             for (int x = 0; x <= _config.gridWidth; x++)
             {
-                _lineRenderer.SetPosition(idx++, new Vector3(x * blockWidth, 0, 0));
-                _lineRenderer.SetPosition(idx++, new Vector3(x * blockWidth, _config.gridHeight * blockHeight, 0));
+                _lineRenderer.SetPosition(idx++, new Vector3((x - 0.5f) * blockWidth, -0.5f, 0));
+                _lineRenderer.SetPosition(idx++, new Vector3((x - 0.5f) * blockWidth, (_config.gridHeight - 0.5f) * blockHeight, 0));
             }
 
             // Horizontal lines
             for (int y = 0; y <= _config.gridHeight; y++)
             {
-                _lineRenderer.SetPosition(idx++, new Vector3(0, y * blockHeight, 0));
-                _lineRenderer.SetPosition(idx++, new Vector3(_config.gridWidth * blockWidth, y * blockHeight, 0));
+                _lineRenderer.SetPosition(idx++, new Vector3(-0.5f, (y - 0.5f) * blockHeight, 0));
+                _lineRenderer.SetPosition(idx++, new Vector3((_config.gridWidth - 0.5f) * blockWidth, (y - 0.5f) * blockHeight, 0));
             }
         }
 
@@ -73,17 +75,6 @@ namespace Lumley.AiTest.Tetris
         {
             HandleInput();
             HandleFalling();
-        }
-
-        protected override void HandleWin()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void HandleLose()
-        {
-            // TODO (slumley): Implement game over logic
-            Debug.Log("Game Over! You lost.", this);
         }
 
         private void HandleInput()
@@ -94,16 +85,24 @@ namespace Lumley.AiTest.Tetris
             if (move != null)
             {
                 if (move.aKey.wasPressedThisFrame || move.leftArrowKey.wasPressedThisFrame)
+                {
                     currentPiece.Move(Vector2Int.left, grid);
+                }
 
                 if (move.dKey.wasPressedThisFrame || move.rightArrowKey.wasPressedThisFrame)
+                {
                     currentPiece.Move(Vector2Int.right, grid);
+                }
 
                 if (move.sKey.wasPressedThisFrame || move.downArrowKey.wasPressedThisFrame)
-                    fallSpeed *= 10f; // Fast drop
+                {
+                    fallTimer += fallSpeed; // Fast drop
+                }
 
                 if (move.wKey.wasPressedThisFrame || move.upArrowKey.wasPressedThisFrame)
+                {
                     currentPiece.Rotate(grid);
+                }
             }
 
             // Touch controls for mobile
@@ -155,15 +154,14 @@ namespace Lumley.AiTest.Tetris
             nextPiece = Instantiate(piecePrefabs[Random.Range(0, piecePrefabs.Length)], gridParent);
 
             currentPiece.Initialize(new Vector2Int(5, 18), poolingManager);
-
-            if (!currentPiece.IsValidPosition(grid))
-            {
-                HandleLose();
-            }
         }
 
         private void PlacePiece()
         {
+            if (!currentPiece.IsValidPosition(grid))
+            {
+                HandleLose();
+            }
             currentPiece.PlaceOnGrid(grid);
             currentPiece = null;
         }

@@ -27,7 +27,6 @@ namespace Lumley.AiTest.BlockJam
 
             grid = new BlockJamGrid(config.gridWidth, config.gridHeight);
             GeneratePuzzle(config.obstacleCount[(int)GameManager.Instance.CurrentDifficulty]);
-            // TODO (slumley): Here we'd show an initialization
             return Task.CompletedTask;
         }
 
@@ -159,16 +158,6 @@ namespace Lumley.AiTest.BlockJam
             {
                 HandleLose();
             }
-        }
-
-        protected override void HandleWin()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void HandleLose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

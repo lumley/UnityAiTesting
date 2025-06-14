@@ -24,7 +24,6 @@ namespace Lumley.AiTest.ColorSort
             tubeCapacity = config.tubeCapacity;
 
             GeneratePuzzle();
-            // TODO (slumley): Here we'd show an initialization
             return Task.CompletedTask;
         }
 
@@ -201,16 +200,6 @@ namespace Lumley.AiTest.ColorSort
             {
                 HandleWin();
             }
-        }
-
-        protected override void HandleWin()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void HandleLose()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

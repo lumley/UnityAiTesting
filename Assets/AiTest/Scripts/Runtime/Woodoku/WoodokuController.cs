@@ -27,7 +27,6 @@ namespace Lumley.AiTest.Woodoku
 
             grid = new WoodokuGrid(config.gridSize);
             SpawnNewPieces();
-            // TODO (slumley): Here we'd show an initialization
             return Task.CompletedTask;
         }
 
@@ -116,16 +115,6 @@ namespace Lumley.AiTest.Woodoku
             {
                 HandleLose();
             }
-        }
-
-        protected override void HandleWin()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void HandleLose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

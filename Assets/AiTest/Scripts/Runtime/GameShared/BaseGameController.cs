@@ -54,8 +54,18 @@ namespace Lumley.AiTest.GameShared
 
         protected abstract Task InitializeGameAsync(GameDifficulty difficulty);
         protected abstract void UpdateGameplay();
-        protected abstract void HandleWin();
-        protected abstract void HandleLose();
+        protected void HandleWin()
+        {
+            State = GameState.IsGameFinished;
+            Debug.Log("Game won", this);
+            // TODO (slumley): Display game result
+        }
+        protected void HandleLose()
+        {
+            State = GameState.IsGameFinished;
+            Debug.Log("Game lost", this);
+            // TODO (slumley): Display game result
+        }
 
         protected void PauseGame()
         {
