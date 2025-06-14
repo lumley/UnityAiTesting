@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49bc262341bd465c8840d226c862e06b, type: 3}
+  m_Name: JourneyConfig
+  m_EditorClassIdentifier: 
+  _dailyGameCountRange: {x: 4, y: 4}
+  _gamePool:
+  - Scene:
+      m_AssetGUID: 47838efbf20a844c1b4e6fdaad0d97d3
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    GameSprite: {fileID: -376962682217914027, guid: 9eb1618c99ccd514f94da5ed6abb1e3f, type: 3}
+    Name: Block Jam
+  - Scene:
+      m_AssetGUID: a1aa11e1d79814dc3b1081668619d243
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    GameSprite: {fileID: -376962682217914027, guid: f1eeea4ac29e71f46b5e12152d5263a8, type: 3}
+    Name: Color Sort
+  - Scene:
+      m_AssetGUID: e3bb7aba770ea42a6863f73718c38484
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    GameSprite: {fileID: -376962682217914027, guid: b19d671e0e7dafb4587778f8b9b1e083, type: 3}
+    Name: Tetris
+  - Scene:
+      m_AssetGUID: a1aa11e1d79814dc3b1081668619d243
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    GameSprite: {fileID: -376962682217914027, guid: b0e671426fb7cf742b250ec83639452c, type: 3}
+    Name: Woodoku
+  _availableDifficultyLevels: 00000000010000000200000003000000
+  _difficultyColorMaps:
+  - Difficulty: 0
+    Color: {r: 0.51370597, g: 0.9811321, b: 0.6030045, a: 1}
+  - Difficulty: 1
+    Color: {r: 0.92916656, g: 1, b: 0.42745098, a: 1}
+  - Difficulty: 2
+    Color: {r: 0.9811321, g: 0.4336651, b: 0.21751513, a: 1}
+  - Difficulty: 3
+    Color: {r: 1, g: 0.2971698, b: 0.2971698, a: 1}
+  _defaultDifficultyColor: {r: 1, g: 1, b: 1, a: 1}

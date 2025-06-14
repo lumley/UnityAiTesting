@@ -10,7 +10,7 @@ namespace Lumley.AiTest.GameShared
         /// <summary>
         /// Starts loading the last session from a given source.
         /// </summary>
-        /// <returns><see cref="Task{TResult}"/> with a <see cref="SerializableSession"/> as result, <see cref="PSerializableSessionNull"/> when no session exists</returns>
+        /// <returns><see cref="Task{TResult}"/> with a <see cref="SerializableSession"/> as result, <see cref="SerializableSession.Null"/> when no session exists</returns>
         Task<SerializableSession> LoadSessionAsync();
 
         /// <summary>

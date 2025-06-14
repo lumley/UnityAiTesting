@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 932506515455999366}
   - component: {fileID: 8999015751437189586}
   m_Layer: 0
-  m_Name: GameDifficultyManager
+  m_Name: CurrentGameInfoManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -13,7 +13,7 @@ namespace Lumley.AiTest.GameShared
         
         protected virtual void Start()
         {
-            var currentGameDifficulty = Toolbox.Get<IGameDifficultyManager>().CurrentGameDifficulty;
+            var currentGameDifficulty = Toolbox.Get<ICurrentGameInfoManager>().CurrentGameDifficulty;
             InitializeGame(currentGameDifficulty);
             GameManager.Instance.OnStateChanged += HandleStateChange;
         }

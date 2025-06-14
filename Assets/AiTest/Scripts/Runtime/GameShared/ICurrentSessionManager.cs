@@ -8,19 +8,24 @@ namespace Lumley.AiTest.GameShared
     public interface ICurrentSessionManager
     {
         /// <summary>
-        /// The current day in which the player is, relative to the starting of the game
+        /// The game streak of the player (0 = playing its first day, 1 = second day, etc.)
         /// </summary>
-        int PlayerDay { get; }
+        int PlayerGameStreak { get; }
         
         /// <summary>
-        /// The day belonging to the session
+        /// The current day of this player as known by the session since EPOCH.
         /// </summary>
-        int RealtimeDay { get; }
+        long LastSavedRealtimeDay { get; }
         
         /// <summary>
-        /// The seed generated for this session
+        /// The seed generated for this session on the current day <see cref="LastSavedRealtimeDay"/>
         /// </summary>
-        int Seed { get; }
+        int SeedForLastSavedRealtimeDay { get; }
+        
+        /// <summary>
+        /// The base seed saved in the session, used to generate the games for the current day.
+        /// </summary>
+        long BaseSeed { get; }
 
         /// <summary>
         /// List that maps each index to each game and their completions status (true = completed, false otherwise)
@@ -28,7 +33,7 @@ namespace Lumley.AiTest.GameShared
         IReadOnlyList<bool> GameCompletionList { get; }
         
         /// <summary>
-        /// Gets the amount of completed gmes in the current day, same as checking each game state in <see cref="GameCompletionList"/>
+        /// Gets the amount of completed games in the current day, same as checking each game state in <see cref="GameCompletionList"/>
         /// </summary>
         int CompletedGameCount { get; }
 
@@ -41,9 +46,9 @@ namespace Lumley.AiTest.GameShared
         /// <summary>
         /// Sets the realtime day (usually, number of days since EPOCH). Calculates the current streak result on day advancement.
         /// </summary>
-        /// <param name="realtimeDay"><see cref="int"/> with the current day in epoch</param>
+        /// <param name="realtimeDay"><see cref="long"/> with the current day in epoch</param>
         /// <returns><see cref="SessionRealtimeResult.StreakBroken"/> when the current day is not consecutive with the last one or when the <see cref="GameCompletionList"/> is not all completed. <see cref="SessionRealtimeResult.StreakContinues"/> otherwise.</returns>
-        SessionRealtimeResult SetRealtimeDay(int realtimeDay);
+        SessionRealtimeResult SetRealtimeDay(long realtimeDay);
 
         /// <summary>
         /// Loads a given session into the current session manager, resetting the full state into that given session.

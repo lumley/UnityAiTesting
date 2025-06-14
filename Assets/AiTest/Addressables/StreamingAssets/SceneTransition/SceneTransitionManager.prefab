@@ -337,7 +337,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2597314307473707034}
   - component: {fileID: 2538401971472396646}
-  - component: {fileID: 7619810614229388542}
   m_Layer: 0
   m_Name: SceneTransitionManager
   m_TagString: Untagged
@@ -377,15 +376,3 @@ MonoBehaviour:
   _fadeInTime: 0.3
   _fadeOutTime: 0.2
   _canvasGroup: {fileID: 1182013424795636852}
---- !u!114 &7619810614229388542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9161703208093175539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eced7a1f30c43ca87bf60ede3d4d70a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

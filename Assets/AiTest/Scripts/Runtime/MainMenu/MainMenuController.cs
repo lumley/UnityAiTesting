@@ -1,23 +1,29 @@
 using System;
 using System.Threading.Tasks;
 using Lumley.AiTest.GameShared;
+using Lumley.AiTest.Journey;
 using Lumley.AiTest.SceneManagement;
+using Lumley.AiTest.Utilities;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 namespace Lumley.AiTest.MainMenu
 {
     public class MainMenuController : MonoBehaviour
     {
+        [Header("User interaction")]
         [SerializeField] private Button _continueButton = null!;
         [SerializeField] private Button _newGameButton = null!;
         [SerializeField] private Button _settingsButton = null!;
 
+        [Header("Scene switching")]
         [SerializeField] private AssetReference _journeyScene = null!;
         [SerializeField] private LoadSceneMode _loadSceneMode = LoadSceneMode.Single;
+
+        [Header("Game creation")] [SerializeField]
+        private JourneyConfig _config = null!;
 
         private Button[] _allButtons = { };
         private SerializableSession? _lastSerializableSession;
@@ -79,7 +85,6 @@ namespace Lumley.AiTest.MainMenu
             {
                 Debug.LogException(e, this);
             }
-            
         }
 
         private async void OnContinueClicked()
@@ -107,12 +112,12 @@ namespace Lumley.AiTest.MainMenu
 
         private async Task CreateNewGameAsync()
         {
-            int startingDay = 0; // TODO (slumley): Calculate current day in Epoch
-            int baseSeed = Random.Range(0, int.MaxValue); // TODO (slumley): Calculate a better base seed than this
-            int journeyGameLength = 4; // TODO (slumley): Obtain this from some configuration scriptable object shared with Journey
+            long startingDay = (long) DateTimeUtilities.GetCurrentTimeSinceEpoch().TotalDays;
+            long baseSeed = SeedGenerationUtilities.GenerateBaseSeed();
+            int journeyGameLength = _config.GetGameCountForDay(baseSeed, startingDay);
 
             var newSession = SerializableSession.CreateEmpty(startingDay, baseSeed, journeyGameLength);
-                
+
             var currentSessionManager = Toolbox.Get<ICurrentSessionManager>();
             currentSessionManager.LoadSession(newSession);
 

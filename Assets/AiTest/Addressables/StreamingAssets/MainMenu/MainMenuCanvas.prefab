@@ -386,6 +386,7 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   _loadSceneMode: 0
+  _config: {fileID: 11400000, guid: 2a59750401956204289b890d3a9e3c32, type: 2}
 --- !u!223 &5152806037441995304
 Canvas:
   m_ObjectHideFlags: 0

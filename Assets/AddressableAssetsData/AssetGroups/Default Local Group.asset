@@ -14,7 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Default Local Group
   m_GUID: 4193bad2612204246b603b515a0638db
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 187f7a2db93734b7c926d04cb847d100
+    m_Address: Assets/AiTest/Addressables/StreamingAssets/GameColorSort/ColorSortScene.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47838efbf20a844c1b4e6fdaad0d97d3
+    m_Address: Assets/AiTest/Addressables/StreamingAssets/GameBlockJam/BlockJamScene.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a1aa11e1d79814dc3b1081668619d243
+    m_Address: Assets/AiTest/Addressables/StreamingAssets/GameWoodoku/WoodokuScene.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3bb7aba770ea42a6863f73718c38484
+    m_Address: Assets/AiTest/Addressables/StreamingAssets/GameTetris/TetrisScene.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: ff08465ae755343c3820fe627157777e, type: 2}
   m_SchemaSet:

@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using Lumley.AiTest.Utilities;
 using UnityEngine;
 
 namespace Lumley.AiTest.GameShared
@@ -7,15 +7,18 @@ namespace Lumley.AiTest.GameShared
     public class CurrentSessionManager : MonoBehaviour, ICurrentSessionManager
     {
         private bool[] _gameCompletionArray = { };
-        private int _startingRealtimeDayEpoch;
-        private int _baseSeed;
+        private long _startingRealtimeDayEpoch;
+        private long _baseSeed;
 
-        public int PlayerDay { get; private set; }
+        public int PlayerGameStreak { get; private set; }
 
-        public int RealtimeDay =>
-            throw new NotImplementedException(); // Calculate the current realtime day from the startingRealtimeDayEpoch
+        public long LastSavedRealtimeDay => _startingRealtimeDayEpoch + PlayerGameStreak;
 
-        public int Seed => throw new NotImplementedException(); // Calculate the current seed as _baseSeed + PlayerDay
+        public int SeedForLastSavedRealtimeDay =>
+            SeedGenerationUtilities.GetSeedForDay(_baseSeed, LastSavedRealtimeDay);
+
+        public long BaseSeed => _baseSeed;
+
         public IReadOnlyList<bool> GameCompletionList => _gameCompletionArray;
 
         public int CompletedGameCount
@@ -45,9 +48,9 @@ namespace Lumley.AiTest.GameShared
             _gameCompletionArray[gameIndex] = true;
         }
 
-        public ICurrentSessionManager.SessionRealtimeResult SetRealtimeDay(int realtimeDay)
+        public ICurrentSessionManager.SessionRealtimeResult SetRealtimeDay(long realtimeDay)
         {
-            var daysSincePrevious = realtimeDay - RealtimeDay;
+            var daysSincePrevious = realtimeDay - LastSavedRealtimeDay;
             if (daysSincePrevious == 0)
             {
                 return ICurrentSessionManager.SessionRealtimeResult.StreakContinues;
@@ -60,7 +63,7 @@ namespace Lumley.AiTest.GameShared
                     _gameCompletionArray[i] = false;
                 }
 
-                PlayerDay += 1;
+                PlayerGameStreak += 1;
                 return ICurrentSessionManager.SessionRealtimeResult.StreakContinues;
             }
 
@@ -83,7 +86,7 @@ namespace Lumley.AiTest.GameShared
         public void LoadSession(SerializableSession serializableSession)
         {
             _startingRealtimeDayEpoch = serializableSession.StartingDayEpoch;
-            PlayerDay = serializableSession.GameStreak;
+            PlayerGameStreak = serializableSession.GameStreak;
             _baseSeed = serializableSession.BaseSeed;
             _gameCompletionArray = serializableSession.CurrentDayCompletion;
         }
@@ -92,7 +95,7 @@ namespace Lumley.AiTest.GameShared
         {
             return SerializableSession.Create(
                 SerializableSession.LatestVersion,
-                PlayerDay,
+                PlayerGameStreak,
                 _startingRealtimeDayEpoch,
                 _baseSeed,
                 _gameCompletionArray);
