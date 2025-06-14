@@ -20,8 +20,8 @@ MonoBehaviour:
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
-    GameSprite: {fileID: -376962682217914027, guid: f1eeea4ac29e71f46b5e12152d5263a8, type: 3}
-    Name: Color Sort
+    GameSprite: {fileID: -376962682217914027, guid: b0e671426fb7cf742b250ec83639452c, type: 3}
+    Name: Woodoku
   - Scene:
       m_AssetGUID: e3bb7aba770ea42a6863f73718c38484
       m_SubObjectName: 

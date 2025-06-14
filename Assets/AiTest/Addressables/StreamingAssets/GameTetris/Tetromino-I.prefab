@@ -49,4 +49,4 @@ MonoBehaviour:
   - {x: 2, y: 0}
   - {x: 1, y: 0}
   - {x: 0, y: 0}
-  _blockPrefab: {fileID: 5492075600329362173, guid: 606967182dec54895ad6c24c3095035c, type: 3}
+  _blockPrefab: {fileID: 4412063278555489992, guid: 5581ee3e4d82ba1418774089c8bdd36a, type: 3}

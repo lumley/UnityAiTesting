@@ -47,8 +47,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _blockPositions:
   - {x: 0, y: 0}
-  _blockPrefab: {fileID: 5492075600329362173, guid: 606967182dec54895ad6c24c3095035c, type: 3}
+  _blockPrefab: {fileID: 7203162666603345772, guid: 6ff9aaf0f7ab07c409d3e3310fa60dee, type: 3}
   _collider: {fileID: -6176810976325984775}
+  _resetDuration: 0.2
+  _resetEase: 3
 --- !u!61 &-6176810976325984775
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -49,8 +49,10 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
   - {x: 0, y: 1}
-  _blockPrefab: {fileID: 5492075600329362173, guid: 606967182dec54895ad6c24c3095035c, type: 3}
+  _blockPrefab: {fileID: 6046008302286789736, guid: ac5e1737a1a14cf4885ac4be8e07a755, type: 3}
   _collider: {fileID: 5831534599718642313}
+  _resetDuration: 0.2
+  _resetEase: 3
 --- !u!61 &5831534599718642313
 BoxCollider2D:
   m_ObjectHideFlags: 0

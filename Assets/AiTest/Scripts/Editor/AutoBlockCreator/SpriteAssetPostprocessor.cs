@@ -63,7 +63,9 @@ namespace Lumley.AiTest.Editor.AutoBlockCreator
 
         private static bool IsInMonitoredFolder(string assetPath)
         {
-            string normalizedPath = "Assets/" + _config!.FolderPath.Trim('/');
+            string normalizedPath = Path.Combine("Assets", _config!.FolderPath);
+            // Replace backslashes with forward slashes for consistency
+            normalizedPath = normalizedPath.Replace('\\', '/').Trim('/');
             return assetPath.StartsWith(normalizedPath);
         }
 

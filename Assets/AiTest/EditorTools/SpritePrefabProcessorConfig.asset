@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30f8758ac55f40bba548ae3ce11c9859, type: 3}
   m_Name: SpritePrefabProcessorConfig
   m_EditorClassIdentifier: 
-  FolderPath: Assets/AiTest/AtlassedSprites/Blocks
+  FolderPath: AiTest/AtlassedSprites/Blocks
   BasePrefab: {fileID: 3150781842379165842, guid: 606967182dec54895ad6c24c3095035c, type: 3}
-  OutputFolder: Assets/GeneratedPrefabs
+  OutputFolder: Assets/AiTest/Addressables/StreamingAssets/GameShared

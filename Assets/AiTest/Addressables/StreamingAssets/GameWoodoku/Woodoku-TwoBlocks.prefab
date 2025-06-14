@@ -48,8 +48,10 @@ MonoBehaviour:
   _blockPositions:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
-  _blockPrefab: {fileID: 5492075600329362173, guid: 606967182dec54895ad6c24c3095035c, type: 3}
+  _blockPrefab: {fileID: 6906773870383865195, guid: 242ba47ea7f6e784881959ecb03c23f6, type: 3}
   _collider: {fileID: -4676772326045160964}
+  _resetDuration: 0.2
+  _resetEase: 3
 --- !u!61 &-4676772326045160964
 BoxCollider2D:
   m_ObjectHideFlags: 0
