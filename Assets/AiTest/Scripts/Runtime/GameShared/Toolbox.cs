@@ -120,5 +120,11 @@ namespace Lumley.AiTest.GameShared
 
             return null;
         }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticFields()
+        {
+            _instance = null;
+        }
     }
 }
