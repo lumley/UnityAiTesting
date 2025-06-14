@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lumley.AiTest.GameShared;
@@ -9,24 +8,25 @@ namespace Lumley.AiTest.BlockJam
 {
     public class BlockJamController : BaseGameController
     {
-        [Header("Block Jam Specific")] public Transform gridParent;
-        public BlockPool blockPool;
-        public Block targetBlock;
-        public Transform exitZone;
+        [Header("Block Jam Specific")] [SerializeField]
+        private Transform _gridParent = null!;
 
-        private BlockJamGrid grid;
-        private List<BlockJamPiece> pieces = new List<BlockJamPiece>();
-        private int movesUsed = 0;
-        private int maxMoves;
-        private BlockJamPiece selectedPiece;
+        [SerializeField] private Block _targetBlock = null!;
+        [SerializeField] private Transform _exitZone = null!;
+        [SerializeField] private BlockJamGameConfig _config = null!;
+
+        private BlockJamGrid _grid = null!;
+        private readonly List<BlockJamPiece> _pieces = new();
+        private int _movesUsed;
+        private int _maxMoves;
+        private BlockJamPiece? _selectedPiece;
 
         protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
-            var config = GameManager.Instance.gameConfig.blockJamConfig;
-            maxMoves = config.movesToWin[(int)GameManager.Instance.CurrentDifficulty];
+            _maxMoves = _config.MovesToWin[(int)difficulty];
 
-            grid = new BlockJamGrid(config.gridWidth, config.gridHeight);
-            GeneratePuzzle(config.obstacleCount[(int)GameManager.Instance.CurrentDifficulty]);
+            _grid = new BlockJamGrid(_config.GridWidth, _config.GridHeight);
+            GeneratePuzzle(_config.ObstacleCount[(int)difficulty]);
             return Task.CompletedTask;
         }
 
@@ -44,7 +44,7 @@ namespace Lumley.AiTest.BlockJam
                 SelectPiece(mousePos);
             }
 
-            if (selectedPiece != null)
+            if (_selectedPiece != null)
             {
                 HandlePieceMovement();
             }
@@ -52,13 +52,13 @@ namespace Lumley.AiTest.BlockJam
 
         private void SelectPiece(Vector2 worldPos)
         {
-            Vector2Int gridPos = grid.WorldToGrid(worldPos);
+            Vector2Int gridPos = _grid.WorldToGrid(worldPos);
 
-            foreach (var piece in pieces)
+            foreach (var piece in _pieces)
             {
                 if (piece.ContainsPosition(gridPos))
                 {
-                    selectedPiece = piece;
+                    _selectedPiece = piece;
                     piece.SetSelected(true);
                     break;
                 }
@@ -78,19 +78,19 @@ namespace Lumley.AiTest.BlockJam
             else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
                 direction = Vector2Int.right;
 
-            if (direction != Vector2Int.zero && TryMovePiece(selectedPiece, direction))
+            if (direction != Vector2Int.zero && _selectedPiece != null && TryMovePiece(_selectedPiece, direction))
             {
-                movesUsed++;
-                selectedPiece.SetSelected(false);
-                selectedPiece = null;
+                _movesUsed++;
+                _selectedPiece.SetSelected(false);
+                _selectedPiece = null;
             }
         }
 
         private bool TryMovePiece(BlockJamPiece piece, Vector2Int direction)
         {
-            if (grid.CanMovePiece(piece, direction))
+            if (_grid.CanMovePiece(piece, direction))
             {
-                grid.MovePiece(piece, direction);
+                _grid.MovePiece(piece, direction);
                 return true;
             }
 
@@ -103,7 +103,7 @@ namespace Lumley.AiTest.BlockJam
             GameObject targetObj = new GameObject("TargetPiece");
             BlockJamPiece targetPiece = targetObj.AddComponent<BlockJamPiece>();
             targetPiece.Initialize(new Vector2Int(1, 3), new Vector2Int(2, 1), Color.red, true);
-            pieces.Add(targetPiece);
+            _pieces.Add(targetPiece);
 
             // Generate random obstacles
             for (int i = 0; i < obstacleCount; i++)
@@ -116,14 +116,14 @@ namespace Lumley.AiTest.BlockJam
                     GameObject obstacleObj = new GameObject($"Obstacle_{i}");
                     BlockJamPiece obstacle = obstacleObj.AddComponent<BlockJamPiece>();
                     obstacle.Initialize(position, size, Random.ColorHSV(), false);
-                    pieces.Add(obstacle);
+                    _pieces.Add(obstacle);
                 }
             }
 
             // Place all pieces on grid
-            foreach (var piece in pieces)
+            foreach (var piece in _pieces)
             {
-                grid.PlacePiece(piece);
+                _grid.PlacePiece(piece);
             }
         }
 
@@ -133,11 +133,11 @@ namespace Lumley.AiTest.BlockJam
             while (attempts < 50)
             {
                 Vector2Int pos = new Vector2Int(
-                    Random.Range(0, grid.Width - size.x + 1),
-                    Random.Range(0, grid.Height - size.y + 1)
+                    Random.Range(0, _grid.Width - size.x + 1),
+                    Random.Range(0, _grid.Height - size.y + 1)
                 );
 
-                if (grid.IsAreaFree(pos, size))
+                if (_grid.IsAreaFree(pos, size))
                     return pos;
 
                 attempts++;
@@ -149,12 +149,12 @@ namespace Lumley.AiTest.BlockJam
         private void CheckWinCondition()
         {
             // Check if target piece reached the exit
-            BlockJamPiece targetPiece = pieces[0]; // First piece is always target
-            if (grid.IsPieceAtExit(targetPiece))
+            BlockJamPiece targetPiece = _pieces[0]; // First piece is always target
+            if (_grid.IsPieceAtExit(targetPiece))
             {
                 HandleWin();
             }
-            else if (movesUsed >= maxMoves)
+            else if (_movesUsed >= _maxMoves)
             {
                 HandleLose();
             }

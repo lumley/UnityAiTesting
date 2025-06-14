@@ -7,21 +7,21 @@ namespace Lumley.AiTest.ColorSort
 {
     public class ColorSortController : BaseGameController
     {
-        [Header("Color Sort Specific")] public Transform tubesParent;
-        public BlockPool blockPool;
+        [Header("Color Sort Specific")] public Transform _tubesParent;
 
-        private List<ColorTube> tubes = new List<ColorTube>();
-        private ColorTube selectedTube;
-        private int tubeCount;
-        private int colorCount;
-        private int tubeCapacity;
+        [SerializeField] private ColorSortGameConfig _config = null!;
+
+        private List<ColorTube> _tubes = new();
+        private ColorTube _selectedTube;
+        private int _tubeCount;
+        private int _colorCount;
+        private int _tubeCapacity;
 
         protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
-            var config = GameManager.Instance.gameConfig.colorSortConfig;
-            tubeCount = config.tubeCount[(int)GameManager.Instance.CurrentDifficulty];
-            colorCount = config.colorCount[(int)GameManager.Instance.CurrentDifficulty];
-            tubeCapacity = config.tubeCapacity;
+            _tubeCount = _config.TubeCount[(int)difficulty];
+            _colorCount = _config.ColorCount[(int)difficulty];
+            _tubeCapacity = _config.TubeCapacity;
 
             GeneratePuzzle();
             return Task.CompletedTask;
@@ -48,31 +48,31 @@ namespace Lumley.AiTest.ColorSort
 
             if (clickedTube == null) return;
 
-            if (selectedTube == null)
+            if (_selectedTube == null)
             {
                 // First selection - select source tube
                 if (!clickedTube.IsEmpty())
                 {
-                    selectedTube = clickedTube;
+                    _selectedTube = clickedTube;
                     clickedTube.SetSelected(true);
                 }
             }
             else
             {
                 // Second selection - try to pour
-                if (clickedTube == selectedTube)
+                if (clickedTube == _selectedTube)
                 {
                     // Deselect if clicking same tube
-                    selectedTube.SetSelected(false);
-                    selectedTube = null;
+                    _selectedTube.SetSelected(false);
+                    _selectedTube = null;
                 }
                 else
                 {
                     // Try to pour from selected to clicked tube
-                    if (TryPourBetweenTubes(selectedTube, clickedTube))
+                    if (TryPourBetweenTubes(_selectedTube, clickedTube))
                     {
-                        selectedTube.SetSelected(false);
-                        selectedTube = null;
+                        _selectedTube.SetSelected(false);
+                        _selectedTube = null;
                     }
                 }
             }
@@ -80,7 +80,7 @@ namespace Lumley.AiTest.ColorSort
 
         private ColorTube GetTubeAtPosition(Vector2 worldPos)
         {
-            foreach (var tube in tubes)
+            foreach (var tube in _tubes)
             {
                 if (tube.ContainsPoint(worldPos))
                     return tube;
@@ -120,26 +120,26 @@ namespace Lumley.AiTest.ColorSort
         private void GeneratePuzzle()
         {
             // Create tubes
-            for (int i = 0; i < tubeCount; i++)
+            for (int i = 0; i < _tubeCount; i++)
             {
                 GameObject tubeObj = new GameObject($"Tube_{i}");
-                tubeObj.transform.SetParent(tubesParent);
+                tubeObj.transform.SetParent(_tubesParent);
                 tubeObj.transform.position = new Vector3(i * 2f, 0, 0);
 
                 ColorTube tube = tubeObj.AddComponent<ColorTube>();
-                tube.Initialize(tubeCapacity);
-                tubes.Add(tube);
+                tube.Initialize(_tubeCapacity);
+                _tubes.Add(tube);
             }
 
             // Generate colors
-            Color[] colors = GenerateColors(colorCount);
+            Color[] colors = GenerateColors(_colorCount);
 
             // Fill tubes with mixed colors (leave some empty for solving)
             List<Block> allBlocks = new List<Block>();
 
-            for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
+            for (int colorIndex = 0; colorIndex < _colorCount; colorIndex++)
             {
-                for (int j = 0; j < tubeCapacity; j++)
+                for (int j = 0; j < _tubeCapacity; j++)
                 {
                     GameObject blockObj = new GameObject($"ColorBlock_{colorIndex}_{j}");
                     Block block = blockObj.AddComponent<Block>();
@@ -158,14 +158,14 @@ namespace Lumley.AiTest.ColorSort
             }
 
             // Distribute blocks to tubes (leaving some tubes empty)
-            int tubesForBlocks = tubeCount - 2; // Leave 2 tubes empty for maneuvering
+            int tubesForBlocks = _tubeCount - 2; // Leave 2 tubes empty for maneuvering
             int blocksPerTube = allBlocks.Count / tubesForBlocks;
 
             for (int i = 0; i < tubesForBlocks; i++)
             {
                 for (int j = 0; j < blocksPerTube && i * blocksPerTube + j < allBlocks.Count; j++)
                 {
-                    tubes[i].AddBlock(allBlocks[i * blocksPerTube + j]);
+                    _tubes[i].AddBlock(allBlocks[i * blocksPerTube + j]);
                 }
             }
         }
@@ -187,7 +187,7 @@ namespace Lumley.AiTest.ColorSort
         {
             bool allSorted = true;
 
-            foreach (var tube in tubes)
+            foreach (var tube in _tubes)
             {
                 if (!tube.IsEmpty() && !tube.IsSingleColor())
                 {
