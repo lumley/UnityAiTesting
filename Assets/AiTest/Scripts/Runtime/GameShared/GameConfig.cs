@@ -8,19 +8,9 @@ namespace Lumley.AiTest.GameShared
     [CreateAssetMenu(fileName = "GameConfig", menuName = "Game/Config")]
     public class GameConfig : ScriptableObject
     {
-        [Header("Woodoku Settings")] public WoodokuConfig woodokuConfig;
-
         [Header("Block Jam Settings")] public BlockJamConfig blockJamConfig;
 
         [Header("Color Sort Settings")] public ColorSortConfig colorSortConfig;
-    }
-
-    [System.Serializable]
-    public class WoodokuConfig
-    {
-        public int[] targetScores = { 500, 1000, 2000, 5000 };
-        public int[] piecesCount = { 20, 15, 10, 5 }; // pieces to place
-        public int gridSize = 9;
     }
 
     [System.Serializable]

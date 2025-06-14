@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Lumley.AiTest.GameShared;
+using Lumley.AiTest.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,25 +11,27 @@ namespace Lumley.AiTest.Tetris
     {
         [Header("Tetris Config")] [SerializeField]
         private TetrisGameConfig _config = null!;
+        
+        [SerializeField]
+        private Transform _gridParent = null!;
+        
+        [SerializeField]
+        private TetrisPiece[] _piecePrefabs = { };
 
-        [Header("Utilities")]
-        [SerializeField] private PoolingManager poolingManager = null!;
+        [Header("Utilities")] [SerializeField] private PoolingManager poolingManager = null!;
 
         [SerializeField] private LineRenderer _lineRenderer = null!;
 
-        [Header("Camera Settings")]
-        [SerializeField] private Camera _camera = null!;
+        [Header("Camera Settings")] [SerializeField]
+        private Camera _camera = null!;
 
-        [SerializeField, Tooltip("Percentage of camera margin relative to the board size")] private float _cameraDistanceFactor = 0.1f;
+        [SerializeField, Tooltip("Percentage of camera margin relative to the board size")]
+        private float _cameraDistanceFactor = 0.1f;
 
         [SerializeField] private Block _referenceBlock = null!;
-        
-        [Header("HUD")]
-        [SerializeField] private TMP_Text _objectiveLinesText = null!;
-        [SerializeField] private TMP_Text _currentLinesText = null!;
 
-        public Transform _gridParent = null!;
-        public TetrisPiece[] _piecePrefabs = {};
+        [Header("HUD")] [SerializeField] private TMP_Text _objectiveLinesText = null!;
+        [SerializeField] private TMP_Text _currentLinesText = null!;
 
         private TetrisGrid grid;
         private TetrisPiece? currentPiece;
@@ -40,18 +43,16 @@ namespace Lumley.AiTest.Tetris
 
         protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
-            _fallSpeed = _config.fallSpeeds[(int)difficulty];
-            _targetLines = _config.linesToWin[(int)difficulty];
+            _fallSpeed = _config.FallSpeeds[(int)difficulty];
+            _targetLines = _config.LinesToWin[(int)difficulty];
 
             _currentLinesText.text = "0";
             _objectiveLinesText.text = _targetLines.ToString();
 
-            grid = new TetrisGrid(_config.gridWidth, _config.gridHeight, _gridParent);
+            grid = new TetrisGrid(_config.GridWidth, _config.GridHeight, _gridParent);
             var blockSize = _referenceBlock.GetBounds().size;
-            var originalCameraPositionZ = _camera.transform.position.z;
-            _camera.transform.position = new Vector3(+_config.gridWidth * blockSize.x / 2f,
-                +_config.gridHeight * blockSize.y / 2f, originalCameraPositionZ);
-            _camera.orthographicSize = Mathf.Max(_config.gridWidth * blockSize.x, _config.gridHeight * blockSize.y) * (0.5f + _cameraDistanceFactor);
+            _camera.CenterCameraOnGrid(blockSize, new Vector2Int(_config.GridWidth, _config.GridHeight),
+                _cameraDistanceFactor);
 
             SpawnNewPiece();
             DrawGrid();
@@ -60,24 +61,26 @@ namespace Lumley.AiTest.Tetris
 
         private void DrawGrid()
         {
-            _lineRenderer.positionCount = (_config.gridWidth + 1) * 2 + (_config.gridHeight + 1) * 2;
+            _lineRenderer.positionCount = (_config.GridWidth + 1) * 2 + (_config.GridHeight + 1) * 2;
             int idx = 0;
             var blockSize = _referenceBlock.GetBounds().size;
             var blockWidth = blockSize.x;
             var blockHeight = blockSize.y;
 
             // Vertical lines
-            for (int x = 0; x <= _config.gridWidth; x++)
+            for (int x = 0; x <= _config.GridWidth; x++)
             {
                 _lineRenderer.SetPosition(idx++, new Vector3((x - 0.5f) * blockWidth, -0.5f, 0));
-                _lineRenderer.SetPosition(idx++, new Vector3((x - 0.5f) * blockWidth, (_config.gridHeight - 0.5f) * blockHeight, 0));
+                _lineRenderer.SetPosition(idx++,
+                    new Vector3((x - 0.5f) * blockWidth, (_config.GridHeight - 0.5f) * blockHeight, 0));
             }
 
             // Horizontal lines
-            for (int y = 0; y <= _config.gridHeight; y++)
+            for (int y = 0; y <= _config.GridHeight; y++)
             {
                 _lineRenderer.SetPosition(idx++, new Vector3(-0.5f, (y - 0.5f) * blockHeight, 0));
-                _lineRenderer.SetPosition(idx++, new Vector3((_config.gridWidth - 0.5f) * blockWidth, (y - 0.5f) * blockHeight, 0));
+                _lineRenderer.SetPosition(idx++,
+                    new Vector3((_config.GridWidth - 0.5f) * blockWidth, (y - 0.5f) * blockHeight, 0));
             }
         }
 
@@ -178,6 +181,7 @@ namespace Lumley.AiTest.Tetris
             {
                 currentPiece!.PlaceOnGrid(grid);
             }
+
             currentPiece = null;
         }
 

@@ -1,49 +1,75 @@
+using System.Collections.Generic;
 using Lumley.AiTest.GameShared;
 using UnityEngine;
 
 namespace Lumley.AiTest.Woodoku
 {
-    public class WoodokuPiece : MonoBehaviour
+    public sealed class WoodokuPiece : MonoBehaviour
     {
-        private Vector2Int[] blockPositions;
-        private Color pieceColor;
-        private bool isSelected = false;
+        [SerializeField]
+        private Vector2Int[] _blockPositions = { };
+        
+        [SerializeField]
+        private Block _blockPrefab = null!;
+        
+        private Color _pieceColor;
+        private bool _isSelected;
 
-        public bool IsSelected => isSelected;
+        public bool IsSelected => _isSelected;
+        
+        private GameObject? _ownPrefab;
+        private PoolingManager? _poolingManager;
+        private List<Block> _blocks = new();
+        
+        public IReadOnlyList<Block> Blocks => _blocks;
 
-        public void Initialize(Vector2Int[] positions)
+        public void Initialize(PoolingManager poolingManager, GameObject ownPrefab)
         {
-            blockPositions = positions;
-            pieceColor = Random.ColorHSV();
+            _ownPrefab = ownPrefab;
+            _poolingManager = poolingManager;
+            _pieceColor = Random.ColorHSV();
 
             // Create visual representation
-            foreach (var pos in blockPositions)
+            foreach (var pos in _blockPositions)
             {
-                GameObject blockObj = new GameObject($"PieceBlock_{pos}");
-                blockObj.transform.SetParent(transform);
-                blockObj.transform.localPosition = new Vector3(pos.x, pos.y, 0);
-
-                Block block = blockObj.AddComponent<Block>();
-                block.Initialize(pieceColor, null!, null!);
+                var block = poolingManager.GetOrCreate(_blockPrefab, transform);
+#if UNITY_EDITOR
+                block.name = $"PieceBlock_{pos}";
+#endif
+                block.transform.localPosition = new Vector3(pos.x, pos.y, 0);
+                block.Initialize(_pieceColor, poolingManager, _blockPrefab.gameObject);
+                _blocks.Add(block);
             }
         }
 
-        public Vector2Int[] GetBlockPositions() => blockPositions;
-        public Color GetColor() => pieceColor;
+        public Vector2Int[] GetBlockPositions() => _blockPositions;
+        public Color GetColor() => _pieceColor;
 
         public int GetScore()
         {
-            return blockPositions.Length * 10;
+            return _blockPositions.Length * 10;
+        }
+
+        public void Recycle()
+        {
+            if (_poolingManager != null && _ownPrefab != null)
+            {
+                _poolingManager.Recycle(_ownPrefab, gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         private void OnMouseDown()
         {
-            isSelected = true;
+            _isSelected = true;
         }
 
         private void OnMouseUp()
         {
-            isSelected = false;
+            _isSelected = false;
         }
     }
 }

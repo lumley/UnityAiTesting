@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lumley.AiTest.GameShared;
+using Lumley.AiTest.Utilities;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,23 +10,41 @@ namespace Lumley.AiTest.Woodoku
 {
     public class WoodokuController : BaseGameController
     {
-        [Header("Woodoku Specific")] public Transform gridParent;
-        public Transform pieceArea;
-        public BlockPool blockPool;
+        [Header("Woodoku Specific")] public Transform _gridParent;
+        public Transform _pieceArea;
+        [SerializeField] private PoolingManager _poolingManager = null!;
 
+        [SerializeField] private WoodokuGameConfig _config;
+        
+        [Header("Camera Settings")] [SerializeField]
+        private Camera _camera = null!;
+
+        [SerializeField, Tooltip("Percentage of camera margin relative to the board size")]
+        private float _cameraDistanceFactor = 0.1f;
+        
+        [SerializeField] private Block _referenceBlock = null!;
+        
+        [Header("Pieces")]
+        [SerializeField]
+        private WoodokuPiece[] _piecePool = { };
+        
         private WoodokuGrid grid;
-        private List<WoodokuPiece> availablePieces = new List<WoodokuPiece>();
-        private int currentScore = 0;
+        private List<WoodokuPiece> availablePieces = new();
+        private int currentScore;
         private int targetScore;
         private int piecesRemaining;
 
         protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
-            var config = GameManager.Instance.gameConfig.woodokuConfig;
-            targetScore = config.targetScores[(int)GameManager.Instance.CurrentDifficulty];
-            piecesRemaining = config.piecesCount[(int)GameManager.Instance.CurrentDifficulty];
+            targetScore = _config.TargetScores[(int)difficulty];
+            piecesRemaining = _config.PiecesCount[(int)difficulty];
 
-            grid = new WoodokuGrid(config.gridSize);
+            grid = new WoodokuGrid(_config.GridSize);
+            var blockSize = _referenceBlock.GetBounds().size;
+            _camera.CenterCameraOnGrid(
+                blockSize,
+                new Vector2Int(_config.GridSize, _config.GridSize),
+                _cameraDistanceFactor);
             SpawnNewPieces();
             return Task.CompletedTask;
         }
@@ -40,7 +59,7 @@ namespace Lumley.AiTest.Woodoku
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 mousePos = _camera.ScreenToWorldPoint(Input.mousePosition);
                 HandlePiecePlacement(mousePos);
             }
         }
@@ -52,9 +71,10 @@ namespace Lumley.AiTest.Woodoku
             {
                 if (piece.IsSelected && grid.CanPlacePiece(piece, worldPos))
                 {
-                    grid.PlacePiece(piece, worldPos);
-                    currentScore += piece.GetScore();
                     availablePieces.Remove(piece);
+                    currentScore += piece.GetScore();
+                    grid.PlacePiece(piece, worldPos, _gridParent);
+                    
                     piecesRemaining--;
 
                     CheckForCompletedLines();
@@ -83,18 +103,10 @@ namespace Lumley.AiTest.Woodoku
 
         private WoodokuPiece CreateRandomPiece()
         {
-            // Create different piece shapes
-            Vector2Int[][] shapes =
-            {
-                new[] { Vector2Int.zero }, // Single block
-                new[] { Vector2Int.zero, Vector2Int.right }, // Two blocks
-                new[] { Vector2Int.zero, Vector2Int.right, Vector2Int.up }, // L-shape
-                new[] { Vector2Int.zero, Vector2Int.right, Vector2Int.up, new Vector2Int(1, 1) } // Square
-            };
+            var selectedPrefab = _piecePool[Random.Range(0, _piecePool.Length)];
+            var piece = _poolingManager.GetOrCreate(selectedPrefab, _pieceArea);
 
-            GameObject pieceObj = new GameObject("WoodokuPiece");
-            WoodokuPiece piece = pieceObj.AddComponent<WoodokuPiece>();
-            piece.Initialize(shapes[Random.Range(0, shapes.Length)]);
+            piece.Initialize(_poolingManager, selectedPrefab.gameObject);
 
             return piece;
         }

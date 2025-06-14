@@ -4,6 +4,7 @@ using Lumley.AiTest.ComponentUtilities;
 using Lumley.AiTest.SceneManagement;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using Random = UnityEngine.Random;
 
 namespace Lumley.AiTest.GameShared
 {
@@ -27,6 +28,10 @@ namespace Lumley.AiTest.GameShared
         {
             try
             {
+                var currentSessionManager = Toolbox.Get<ICurrentSessionManager>();
+                var seedForLastSavedRealtimeDay = currentSessionManager.SeedForLastSavedRealtimeDay;
+                Random.InitState(seedForLastSavedRealtimeDay); // Here we use Unity's Random instead of System.Random because it uses a better algorithm for random number generation and generates more consistent playthroughs since external plugins also tend to use Unity's Random.
+                
                 State = GameState.IsInitializing;
                 var currentGameInfoManager = Toolbox.Get<ICurrentGameInfoManager>();
                 var currentGameDifficulty = currentGameInfoManager.CurrentGameDifficulty;

@@ -3,15 +3,15 @@ using UnityEngine;
 
 namespace Lumley.AiTest.Woodoku
 {
-    public class WoodokuGrid
+    public sealed class WoodokuGrid
     {
-        private Block[,] grid;
-        private int size;
+        private readonly Block?[,] _grid;
+        private readonly int _size;
 
         public WoodokuGrid(int gridSize)
         {
-            size = gridSize;
-            grid = new Block[size, size];
+            _size = gridSize;
+            _grid = new Block[_size, _size];
         }
 
         public bool CanPlacePiece(WoodokuPiece piece, Vector2 worldPos)
@@ -21,31 +21,31 @@ namespace Lumley.AiTest.Woodoku
             foreach (var blockPos in piece.GetBlockPositions())
             {
                 Vector2Int finalPos = gridPos + blockPos;
-                if (!IsValidPosition(finalPos) || grid[finalPos.x, finalPos.y] != null)
+                if (!IsValidPosition(finalPos) || _grid[finalPos.x, finalPos.y] != null)
                     return false;
             }
 
             return true;
         }
 
-        public void PlacePiece(WoodokuPiece piece, Vector2 worldPos)
+        public void PlacePiece(WoodokuPiece piece, Vector2 worldPos, Transform gridParent)
         {
             Vector2Int gridPos = WorldToGrid(worldPos);
 
-            foreach (var blockPos in piece.GetBlockPositions())
+            var blockPositions = piece.GetBlockPositions();
+            var blocks = piece.Blocks;
+            for (var index = 0; index < blockPositions.Length; index++)
             {
+                var block = blocks[index];
+                var blockPos = blockPositions[index];
                 Vector2Int finalPos = gridPos + blockPos;
-                if (IsValidPosition(finalPos))
-                {
-                    // Create and place block
-                    GameObject blockObj = new GameObject("GridBlock");
-                    Block block = blockObj.AddComponent<Block>();
-                    block.Initialize(piece.GetColor(), null!, null!);
+                block.transform.SetParent(gridParent);
 
-                    grid[finalPos.x, finalPos.y] = block;
-                    block.transform.position = GridToWorld(finalPos);
-                }
+                _grid[finalPos.x, finalPos.y] = block;
+                block.transform.position = GridToWorld(finalPos);
             }
+
+            piece.Recycle();
         }
 
         public int ClearCompletedLines()
@@ -53,7 +53,7 @@ namespace Lumley.AiTest.Woodoku
             int linesCleared = 0;
 
             // Check rows
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < _size; y++)
             {
                 if (IsRowFull(y))
                 {
@@ -63,7 +63,7 @@ namespace Lumley.AiTest.Woodoku
             }
 
             // Check columns
-            for (int x = 0; x < size; x++)
+            for (int x = 0; x < _size; x++)
             {
                 if (IsColumnFull(x))
                 {
@@ -77,11 +77,12 @@ namespace Lumley.AiTest.Woodoku
 
         private bool IsValidPosition(Vector2Int pos)
         {
-            return pos.x >= 0 && pos.x < size && pos.y >= 0 && pos.y < size;
+            return pos.x >= 0 && pos.x < _size && pos.y >= 0 && pos.y < _size;
         }
 
         private Vector2Int WorldToGrid(Vector2 worldPos)
         {
+            // TODO (slumley): This needs a base block size to work correctly
             return new Vector2Int(Mathf.RoundToInt(worldPos.x), Mathf.RoundToInt(worldPos.y));
         }
 
@@ -92,9 +93,9 @@ namespace Lumley.AiTest.Woodoku
 
         private bool IsRowFull(int y)
         {
-            for (int x = 0; x < size; x++)
+            for (int x = 0; x < _size; x++)
             {
-                if (grid[x, y] == null) return false;
+                if (_grid[x, y] == null) return false;
             }
 
             return true;
@@ -102,9 +103,9 @@ namespace Lumley.AiTest.Woodoku
 
         private bool IsColumnFull(int x)
         {
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < _size; y++)
             {
-                if (grid[x, y] == null) return false;
+                if (_grid[x, y] == null) return false;
             }
 
             return true;
@@ -112,24 +113,26 @@ namespace Lumley.AiTest.Woodoku
 
         private void ClearRow(int y)
         {
-            for (int x = 0; x < size; x++)
+            for (int x = 0; x < _size; x++)
             {
-                if (grid[x, y] != null)
+                var block = _grid[x, y];
+                if (block != null)
                 {
-                    grid[x, y].OnBlockDestroyed();
-                    grid[x, y] = null;
+                    block.OnBlockDestroyed();
+                    _grid[x, y] = null;
                 }
             }
         }
 
         private void ClearColumn(int x)
         {
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < _size; y++)
             {
-                if (grid[x, y] != null)
+                var block = _grid[x, y];
+                if (block != null)
                 {
-                    grid[x, y].OnBlockDestroyed();
-                    grid[x, y] = null;
+                    block.OnBlockDestroyed();
+                    _grid[x, y] = null;
                 }
             }
         }
