@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using Lumley.AiTest.GameShared;
 using Lumley.AiTest.SceneManagement;
 using Lumley.AiTest.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Lumley.AiTest.Journey
 {
@@ -16,18 +18,26 @@ namespace Lumley.AiTest.Journey
     {
         [Header("Introduction")] [SerializeField]
         private GameObject _introductionRoot = null!;
-        // TODO (slumley): Add reference to timeline to start playing it and await until it's done
         
         [SerializeField]
         private TMP_Text _journeyDayText = null!;
         
         [SerializeField]
         private string _journeyDayTextFormat = "Day {0} of your journey";
+        
+        [SerializeField]
+        private TMP_Text _journeyHoursLeftText = null!;
+        
+        [SerializeField]
+        private string _journeyHoursLeftTextFormat = "You have {0}h {1}m left to complete it";
 
         [Header("Streak Lost")] [SerializeField]
         private GameObject _streakLostRoot = null!;
 
         [SerializeField] private CanvasGroup _streakLostCanvasGroup = null!;
+        [SerializeField] private TMP_Text _streakLostText = null!;
+        [SerializeField] private string _streakLostTextFormat = "You lost your streak of {0} days! Try again!";
+        [SerializeField] private float _streakLostFadeDuration = 1f;
 
         [Header("Configuration")] [SerializeField]
         private JourneyConfig _journeyConfig = null!;
@@ -40,8 +50,22 @@ namespace Lumley.AiTest.Journey
         private Transform _journeyStepRoot = null!;
 
         [SerializeField] private GameObject _journeyStepPrefab = null!;
+        
+        [Header("Cheats")] [SerializeField] private Button _advanceDayButton = null!;
+        
+        private float _nextTextUpdateTimestamp = 0f;
+
+        private void Start()
+        {
+            _advanceDayButton.onClick.AddListener(AdvanceDayCheatPressed);
+        }
 
         private void OnEnable()
+        {
+            InitializeJourney();
+        }
+
+        private void InitializeJourney()
         {
             var currentSessionManager = Toolbox.Get<ICurrentSessionManager>();
             long currentDayEpoch = (long)DateTimeUtilities.GetCurrentTimeSinceEpoch().TotalDays;
@@ -70,6 +94,20 @@ namespace Lumley.AiTest.Journey
             DisplayJourneyMap(gamesForDay);
         }
 
+        private void Update()
+        {
+            if (Time.time < _nextTextUpdateTimestamp)
+            {
+                return;
+            }
+            
+            DateTime now = DateTime.Now;
+            DateTime tomorrow = now.Date.AddDays(1);
+            TimeSpan timeLeft = tomorrow - now;
+
+            _journeyHoursLeftText.text = string.Format(_journeyHoursLeftTextFormat, (int)timeLeft.TotalHours, timeLeft.Minutes);
+        }
+
         private void DisplayJourneyMap(IReadOnlyList<GameJourney> gamesForDay)
         {
             // Here we could use pooling but this view doesn't usually refresh while open, so in terms of overall memory, it is more convenient to instantiate and destroy on demand.
@@ -83,7 +121,7 @@ namespace Lumley.AiTest.Journey
                 var childCountOfStep = child.childCount;
                 for (int j = childCountOfStep - 1; j >= 0; j--)
                 {
-                    Destroy(child.GetChild(j));
+                    Destroy(child.GetChild(j).gameObject);
                 }
             }
 
@@ -130,16 +168,56 @@ namespace Lumley.AiTest.Journey
                 Debug.LogException(e, this);
             }
         }
-
-        private void DisplayGameOver()
+        
+        private async void AdvanceDayCheatPressed()
         {
-            // TODO (slumley): Show the game over screen, transition to the main menu after
-            _streakLostRoot.gameObject.SetActive(true);
+            try
+            {
+                _advanceDayButton.interactable = false;
+                var currentSessionManager = Toolbox.Get<ICurrentSessionManager>();
+                var sessionPersistenceManager = Toolbox.Get<ISessionPersistenceManager>();
+
+                var serializableSession = currentSessionManager.ExportSession();
+                serializableSession.StartingDayEpoch -= 1;
+                
+                await sessionPersistenceManager.PersistSessionAsync(serializableSession);
+                currentSessionManager.LoadSession(serializableSession);
+                InitializeJourney();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
+            finally
+            {
+                _advanceDayButton.interactable = true;
+            }
+        }
+
+        private async void DisplayGameOver()
+        {
+            try
+            {
+                var currentSessionManager = Toolbox.Get<ICurrentSessionManager>();
+                var playerGameStreak = currentSessionManager.PlayerGameStreak;
+                _streakLostText.text = string.Format(_streakLostTextFormat, playerGameStreak);
+
+                _streakLostRoot.gameObject.SetActive(true);
+                _streakLostCanvasGroup.DOFade(1f, _streakLostFadeDuration);
+
+                // Erase the current session
+                var sessionPersistenceManager = Toolbox.Get<ISessionPersistenceManager>();
+                await sessionPersistenceManager.PersistSessionAsync(SerializableSession.Null);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
         }
 
         private void DisplayIntroduction()
         {
-            // TODO (slumley): Show the introduction screen, hide after
+            // TODO (slumley): Show the introduction screen, ideally with a timeline and await it
             _introductionRoot.gameObject.SetActive(true);
         }
     }
