@@ -5,7 +5,7 @@ Case Study: how to build small casual games trying to take the maximum advantage
 The game is supports the following platforms:
  - PC/Standalone
  - Mobile (Android/iOS)
- - WebGL (experimental)
+ - WebGL (experimental): [can be played directly here!](https://lumley.github.io/UnityAiTesting/)
 
 ## Architecture
 
