@@ -9,6 +9,7 @@ namespace Lumley.AiTest.ComponentUtilities
     public sealed class AnimatePopInDelayed : MonoBehaviour
     {
         [SerializeField] private bool _playOnEnable = true;
+        [SerializeField] private bool _deactivateAfterPlaying;
         
         [Header("Animation")]
         [SerializeField] private float _delay = 0.5f;
@@ -36,7 +37,14 @@ namespace Lumley.AiTest.ComponentUtilities
         private void OnDisable()
         {
             KillPreviousTween();
-            TrySetScale(_shouldSetScaleOnDisable);
+            if (_deactivateAfterPlaying)
+            {
+                enabled = false;
+            }
+            else
+            {
+                TrySetScale(_shouldSetScaleOnDisable);
+            }
         }
         
         private void KillPreviousTween()
