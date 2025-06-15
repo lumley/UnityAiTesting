@@ -1,3 +1,4 @@
+using System;
 using Lumley.AiTest.GameShared;
 using UnityEngine;
 
@@ -10,21 +11,31 @@ namespace Lumley.AiTest.Tetris
 
         [SerializeField] private Block _blockPrefab = null!;
 
-        private Vector2Int position;
-        private Block[] blocks = { };
+        private Vector2Int _position;
+        private Block[] _blocks = { };
+        private PoolingManager? _pool;
+        private TetrisPiece? _myOwnPrefab;
 
-        public void Initialize(Vector2Int startPos, PoolingManager pool)
+        public void Initialize(PoolingManager pool, TetrisPiece myOwnPrefab)
         {
-            position = startPos;
+            _pool = pool;
+            _myOwnPrefab = myOwnPrefab;
+            transform.localPosition = Vector3.zero;
+        }
 
-            blocks = new Block[_blockPositions.Length];
+        public void SpawnInnerBlocks(Vector2Int startPos, PoolingManager pool)
+        {
+            _position = startPos;
+
+            _blocks = new Block[_blockPositions.Length];
             for (int i = 0; i < _blockPositions.Length; i++)
             {
                 var block = pool.GetOrCreate(_blockPrefab, transform);
+#if UNITY_EDITOR
                 block.gameObject.name = $"Block_{i}";
-
-                blocks[i] = block;
-                blocks[i].Initialize(Color.white, pool, _blockPrefab.gameObject);
+#endif
+                _blocks[i] = block;
+                _blocks[i].Initialize(Color.white, pool, _blockPrefab.gameObject);
 
                 UpdateBlockPosition(i);
             }
@@ -32,11 +43,11 @@ namespace Lumley.AiTest.Tetris
 
         public bool Move(Vector2Int direction, TetrisGrid grid)
         {
-            Vector2Int newPos = position + direction;
+            Vector2Int newPos = _position + direction;
 
             if (IsValidPosition(newPos, grid))
             {
-                position = newPos;
+                _position = newPos;
                 UpdateAllBlockPositions();
                 return true;
             }
@@ -63,7 +74,7 @@ namespace Lumley.AiTest.Tetris
 
         public bool IsValidPosition(TetrisGrid grid)
         {
-            return IsValidPosition(position, grid);
+            return IsValidPosition(_position, grid);
         }
 
         private bool IsValidPosition(Vector2Int pos, TetrisGrid grid)
@@ -82,7 +93,7 @@ namespace Lumley.AiTest.Tetris
         {
             foreach (var blockPos in rotatedPos)
             {
-                Vector2Int worldPos = position + blockPos;
+                Vector2Int worldPos = _position + blockPos;
                 if (!grid.IsValidPosition(worldPos))
                     return false;
             }
@@ -92,20 +103,44 @@ namespace Lumley.AiTest.Tetris
 
         public void PlaceOnGrid(TetrisGrid grid)
         {
-            for (int i = 0; i < blocks.Length; i++)
+            for (int i = 0; i < _blocks.Length; i++)
             {
-                Vector2Int worldPos = position + _blockPositions[i];
-                grid.SetBlock(worldPos, blocks[i]);
-                blocks[i].transform.SetParent(grid.GridParent, worldPositionStays: true); // Remove from piece
+                Vector2Int worldPos = _position + _blockPositions[i];
+                grid.SetBlock(worldPos, _blocks[i]);
+                _blocks[i].transform.SetParent(grid.GridParent, worldPositionStays: true); // Remove from piece
             }
+            _blocks = Array.Empty<Block>();
+            Recycle();
+        }
+        
+        public void RecycleInnerBlocks()
+        {
+            if (_pool != null && _myOwnPrefab != null)
+            {
+                foreach (var block in _blocks)
+                {
+                    block.OnBlockDestroyed();
+                }
+                _blocks = Array.Empty<Block>();
+            }
+        }
 
-            // TODO (slumley): Use pooling for the grid
-            Destroy(gameObject); // Destroy the piece after placing it on the grid
+        public void Recycle()
+        {
+            if (_pool != null && _myOwnPrefab != null)
+            {
+                RecycleInnerBlocks();
+                _pool.Recycle(_myOwnPrefab, this);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         private void UpdateAllBlockPositions()
         {
-            for (int i = 0; i < blocks.Length; i++)
+            for (int i = 0; i < _blocks.Length; i++)
             {
                 UpdateBlockPosition(i);
             }
@@ -113,11 +148,33 @@ namespace Lumley.AiTest.Tetris
 
         private void UpdateBlockPosition(int blockIndex)
         {
-            Vector2Int logicalPos = position + _blockPositions[blockIndex];
-            var block = blocks[blockIndex];
+            Vector2Int logicalPos = _position + _blockPositions[blockIndex];
+            var block = _blocks[blockIndex];
             var blockBounds = block.GetBounds();
             var size = blockBounds.size;
-            block.transform.position = new Vector3(logicalPos.x * size.x, logicalPos.y * size.y, 0);
+            block.transform.localPosition = new Vector3(logicalPos.x * size.x, logicalPos.y * size.y, 0);
+        }
+
+        public Vector2Int GetMaxLogicalSize()
+        {
+            Vector2Int maxSize = Vector2Int.zero;
+            foreach (var pos in _blockPositions)
+            {
+                maxSize.x = Mathf.Max(maxSize.x, pos.x);
+                maxSize.y = Mathf.Max(maxSize.y, pos.y);
+            }
+            return maxSize + Vector2Int.one; // Add one to include the block itself
+        }
+        
+        public Vector2Int GetMinLogicalSize()
+        {
+            Vector2Int minSize = Vector2Int.zero;
+            foreach (var pos in _blockPositions)
+            {
+                minSize.x = Mathf.Min(minSize.x, pos.x);
+                minSize.y = Mathf.Min(minSize.y, pos.y);
+            }
+            return minSize; // No need to add one here
         }
     }
 }

@@ -11,14 +11,13 @@ namespace Lumley.AiTest.Tetris
     {
         [Header("Tetris Config")] [SerializeField]
         private TetrisGameConfig _config = null!;
-        
-        [SerializeField]
-        private Transform _gridParent = null!;
-        
-        [SerializeField]
-        private TetrisPiece[] _piecePrefabs = { };
-        
-        [Header("Utilities")] [SerializeField] private PoolingManager poolingManager = null!;
+
+        [SerializeField] private Transform _gridParent = null!;
+        [SerializeField] private Transform _previewGridParent = null!;
+
+        [SerializeField] private TetrisPiece[] _piecePrefabs = { };
+
+        [Header("Utilities")] [SerializeField] private PoolingManager _poolingManager = null!;
 
         [SerializeField] private GameObject _gridCellPrefab = null!;
 
@@ -33,9 +32,9 @@ namespace Lumley.AiTest.Tetris
         [Header("HUD")] [SerializeField] private TMP_Text _objectiveLinesText = null!;
         [SerializeField] private TMP_Text _currentLinesText = null!;
 
-        private TetrisGrid grid = null!;
-        private TetrisPiece? currentPiece;
-        private TetrisPiece? nextPiece; // TODO (slumley): Create a grid for previews, place there
+        private TetrisGrid _grid = null!;
+        private TetrisPiece? _currentPiece;
+        private TetrisPiece? _nextPiece;
         private float _fallTimer;
         private float _fallSpeed;
         private int _linesCleared;
@@ -49,14 +48,44 @@ namespace Lumley.AiTest.Tetris
             _currentLinesText.text = "0";
             _objectiveLinesText.text = _targetLines.ToString();
 
-            grid = new TetrisGrid(_config.GridWidth, _config.GridHeight, _gridParent);
+            _grid = new TetrisGrid(_config.GridWidth, _config.GridHeight, _gridParent);
             var blockSize = _referenceBlock.GetBounds().size;
             _camera.CenterCameraOnGrid(blockSize, new Vector2Int(_config.GridWidth, _config.GridHeight),
                 _cameraDistanceFactor);
+            
+            // Move the preview grid top left of the grid
+            _previewGridParent.localPosition = new Vector3(-_config.GridWidth * blockSize.x * 0.5f,
+                _config.GridHeight * blockSize.y * 0.5f, 0f);
 
             SpawnNewPiece();
             DrawGrid();
+            DrawPreviewGrid();
+            
             return Task.CompletedTask;
+        }
+
+        private void DrawPreviewGrid()
+        {
+            // Get the maximum block size from _piecePrefabs by traversing each piece's bounds.
+            Vector2Int maxBlockSize = Vector2Int.one;
+            foreach (var piecePrefab in _piecePrefabs)
+            {
+                Vector2Int logicalBlockSize = piecePrefab.GetMaxLogicalSize();
+                maxBlockSize.x = Mathf.Max(maxBlockSize.x, logicalBlockSize.x);
+                maxBlockSize.y = Mathf.Max(maxBlockSize.y, logicalBlockSize.y);
+            }
+            maxBlockSize = new Vector2Int(Mathf.Max(maxBlockSize.x, maxBlockSize.y), Mathf.Max(maxBlockSize.x, maxBlockSize.y));
+            
+            var blockSize = _referenceBlock.GetBounds().size;
+            for (int x = 0; x < maxBlockSize.x; x++)
+            {
+                for (int y = 0; y < maxBlockSize.y; y++)
+                {
+                    var cellPosition = new Vector3(x * blockSize.x, y * blockSize.y, 10f);
+                    var cell = Instantiate(_gridCellPrefab, _previewGridParent);
+                    cell.transform.localPosition = cellPosition;
+                }
+            }
         }
 
         private void DrawGrid()
@@ -81,19 +110,49 @@ namespace Lumley.AiTest.Tetris
 
         private void HandleInput()
         {
-            if (currentPiece == null) return;
+            if (_currentPiece == null) return;
+
+            var touchscreen = Touchscreen.current;
+            if (touchscreen != null)
+            {
+                var touches = touchscreen.touches;
+                foreach (var touch in touches)
+                {
+                    if (touch.press.wasPressedThisFrame)
+                    {
+                        Vector2 touchPos = touch.position.ReadValue();
+                        // left half = move left, right half = move right, top = rotate, bottom = fast drop
+                        if (touchPos.x < Screen.width * 0.25f)
+                        {
+                            _currentPiece.Move(Vector2Int.left, _grid);
+                        }
+                        else if (touchPos.x > Screen.width * 0.75f)
+                        {
+                            _currentPiece.Move(Vector2Int.right, _grid);
+                        }
+                        else if (touchPos.y > Screen.height * 0.75f)
+                        {
+                            _currentPiece.Rotate(_grid);
+                        }
+                        else if (touchPos.y < Screen.height * 0.25f)
+                        {
+                            _fallTimer += _fallSpeed; // Fast drop
+                        }
+                    }
+                }
+            }
 
             var move = Keyboard.current;
             if (move != null)
             {
                 if (move.aKey.wasPressedThisFrame || move.leftArrowKey.wasPressedThisFrame)
                 {
-                    currentPiece.Move(Vector2Int.left, grid);
+                    _currentPiece.Move(Vector2Int.left, _grid);
                 }
 
                 if (move.dKey.wasPressedThisFrame || move.rightArrowKey.wasPressedThisFrame)
                 {
-                    currentPiece.Move(Vector2Int.right, grid);
+                    _currentPiece.Move(Vector2Int.right, _grid);
                 }
 
                 if (move.sKey.wasPressedThisFrame || move.downArrowKey.wasPressedThisFrame)
@@ -103,29 +162,7 @@ namespace Lumley.AiTest.Tetris
 
                 if (move.wKey.wasPressedThisFrame || move.upArrowKey.wasPressedThisFrame)
                 {
-                    currentPiece.Rotate(grid);
-                }
-            }
-
-            // Touch controls for mobile
-            if (Touchscreen.current != null)
-            {
-                var touches = Touchscreen.current.touches;
-                foreach (var touch in touches)
-                {
-                    if (touch.press.wasPressedThisFrame)
-                    {
-                        Vector2 touchPos = touch.position.ReadValue();
-                        // Example: left half = move left, right half = move right, top = rotate, bottom = fast drop
-                        if (touchPos.x < Screen.width * 0.25f)
-                            currentPiece.Move(Vector2Int.left, grid);
-                        else if (touchPos.x > Screen.width * 0.75f)
-                            currentPiece.Move(Vector2Int.right, grid);
-                        else if (touchPos.y > Screen.height * 0.75f)
-                            currentPiece.Rotate(grid);
-                        else if (touchPos.y < Screen.height * 0.25f)
-                            _fallSpeed *= 10f;
-                    }
+                    _currentPiece.Rotate(_grid);
                 }
             }
         }
@@ -136,7 +173,7 @@ namespace Lumley.AiTest.Tetris
 
             if (_fallTimer >= _fallSpeed)
             {
-                if (currentPiece != null && !currentPiece.Move(Vector2Int.down, grid))
+                if (_currentPiece != null && !_currentPiece.Move(Vector2Int.down, _grid))
                 {
                     PlacePiece();
                     CheckLines();
@@ -149,34 +186,51 @@ namespace Lumley.AiTest.Tetris
 
         private void SpawnNewPiece()
         {
-            if (nextPiece == null)
-                nextPiece = Instantiate(_piecePrefabs[Random.Range(0, _piecePrefabs.Length)], _gridParent);
+            if (_nextPiece == null)
+            {
+                var tetrisPiecePrefab = _piecePrefabs[Random.Range(0, _piecePrefabs.Length)];
+                _nextPiece = _poolingManager.GetOrCreate(tetrisPiecePrefab, _previewGridParent);
+                _nextPiece.Initialize(_poolingManager, tetrisPiecePrefab);
+            }
 
-            currentPiece = nextPiece;
-            nextPiece = Instantiate(_piecePrefabs[Random.Range(0, _piecePrefabs.Length)], _gridParent);
+            _currentPiece = _nextPiece;
+            _currentPiece.RecycleInnerBlocks();
+            _currentPiece.transform.SetParent(_gridParent, worldPositionStays: false);
 
-            currentPiece.Initialize(new Vector2Int(5, 18), poolingManager);
+            var piecePrefab = _piecePrefabs[Random.Range(0, _piecePrefabs.Length)];
+            _nextPiece = _poolingManager.GetOrCreate(piecePrefab, _previewGridParent);
+            _nextPiece.Initialize(_poolingManager, piecePrefab);
+            _nextPiece.SpawnInnerBlocks(Vector2Int.up, _poolingManager);
+
+            // Spawn the blocks at the top-center of the grid, down enough that it fits the piece
+            Vector2Int min = _currentPiece.GetMinLogicalSize();
+            Vector2Int max = _currentPiece.GetMaxLogicalSize();
+            int pieceWidth = max.x - min.x + 1;
+            int spawnX = (_config.GridWidth - pieceWidth) / 2 - min.x;
+            int spawnY = _config.GridHeight - 1 - max.y;
+            Vector2Int spawnPoint = new Vector2Int(spawnX, spawnY);
+            _currentPiece.SpawnInnerBlocks(spawnPoint, _poolingManager);
         }
 
         private void PlacePiece()
         {
-            var isCurrentPieceNull = currentPiece == null;
-            if (isCurrentPieceNull || !currentPiece!.IsValidPosition(grid))
+            var isCurrentPieceNull = _currentPiece == null;
+            if (isCurrentPieceNull || !_currentPiece!.IsValidPosition(_grid))
             {
                 HandleLose();
             }
 
             if (!isCurrentPieceNull)
             {
-                currentPiece!.PlaceOnGrid(grid);
+                _currentPiece!.PlaceOnGrid(_grid);
             }
 
-            currentPiece = null;
+            _currentPiece = null;
         }
 
         private void CheckLines()
         {
-            int clearedThisTurn = grid.ClearCompletedLines();
+            int clearedThisTurn = _grid.ClearCompletedLines();
             _linesCleared += clearedThisTurn;
             _currentLinesText.text = _linesCleared.ToString();
 
