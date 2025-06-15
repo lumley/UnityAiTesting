@@ -20,7 +20,7 @@ namespace Lumley.AiTest.Woodoku
         [SerializeField] private Color _gridCellColor2 = Color.rosyBrown;
 
         [SerializeField] private WoodokuGameConfig _config = null!;
-        
+
         [Header("Camera Settings")] [SerializeField]
         private Camera _camera = null!;
 
@@ -30,13 +30,15 @@ namespace Lumley.AiTest.Woodoku
         [SerializeField] private Block _referenceBlock = null!;
 
         [Header("Pieces")] [SerializeField] private WoodokuPiece[] _piecePool = { };
-        
+
         [Header("HUD")] [SerializeField] private TMP_Text _objectivePointsText = null!;
         [SerializeField] private TMP_Text _currentPointsText = null!;
         [SerializeField] private TMP_Text _piecesLeftText = null!;
         [SerializeField] private string _piecesLeftTextFormat = "You have {0} pieces left";
 
-        private WoodokuGrid _grid = null!; // Grid is only accessed internally and nothing runs until initialized, so it's safe to use null-forgiving operator here.
+        private WoodokuGrid
+            _grid = null!; // Grid is only accessed internally and nothing runs until initialized, so it's safe to use null-forgiving operator here.
+
         private readonly List<WoodokuPiece> _availablePieces = new();
         private int _currentScore;
         private int _targetScore;
@@ -46,7 +48,7 @@ namespace Lumley.AiTest.Woodoku
         {
             _targetScore = _config.TargetScores[(int)difficulty];
             SetPiecesRemaining(_config.PiecesCount[(int)difficulty]);
-            
+
             _objectivePointsText.text = _targetScore.ToString();
             _currentPointsText.text = "0";
 
@@ -128,15 +130,18 @@ namespace Lumley.AiTest.Woodoku
             var spawnAtPosition = Vector3.zero;
 
             int piecesToSpawn = Mathf.Min(3, _piecesRemaining);
+            var singleBlockWidth = _referenceBlock.GetBounds().size.x * 0.5f;
             for (int i = 0; i < piecesToSpawn; i++)
             {
                 WoodokuPiece newPiece = CreateRandomPiece();
                 _availablePieces.Add(newPiece);
 
                 newPiece.SetInitialPosition(spawnAtPosition);
+                
+                float blockWidth = newPiece.GetBounds().size.x;
                 spawnAtPosition = new Vector3(
-                    spawnAtPosition.x + newPiece.GetBounds().size.x * 1.5f, 
-                    spawnAtPosition.y, 
+                    spawnAtPosition.x + blockWidth + singleBlockWidth,
+                    spawnAtPosition.y,
                     spawnAtPosition.z);
             }
         }

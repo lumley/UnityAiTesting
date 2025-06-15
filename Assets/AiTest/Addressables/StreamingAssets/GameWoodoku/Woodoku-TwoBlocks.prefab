@@ -48,7 +48,7 @@ MonoBehaviour:
   _blockPositions:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
-  _blockPrefab: {fileID: 6906773870383865195, guid: 242ba47ea7f6e784881959ecb03c23f6, type: 3}
+  _blockPrefab: {fileID: 4412063278555489992, guid: 5581ee3e4d82ba1418774089c8bdd36a, type: 3}
   _collider: {fileID: -4676772326045160964}
   _resetDuration: 0.2
   _resetEase: 3
