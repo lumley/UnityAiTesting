@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 181f27cd47f44b84c830f2fe83606375
+guid: 565329356ddb823458eafb6970125b8d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 9141546208320821595
-    second: inset_area_0
+      213: 8658477532493798171
+    second: AppLogo_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -72,10 +72,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: inset_area_0
+      name: AppLogo_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 1
-        width: 512
-        height: 511
+        x: 59
+        y: 57
+        width: 906
+        height: 741
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 100, y: 100, z: 100, w: 100}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b5918cca7db4dde70800000000000000
-      internalID: 9141546208320821595
+      spriteID: b1b5ef3f077192870800000000000000
+      internalID: 8658477532493798171
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 482988df99aafd046b82324493aedf06
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      inset_area_0: 9141546208320821595
+      AppLogo_0: 8658477532493798171
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

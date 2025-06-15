@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8e49c46215a87b64595b57b680662676
+guid: e9e0e8415f3bb45448672c0f3f285c9b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 648765595615440838
-    second: 00005-343231827_0
+      213: -8847059007615022753
+    second: JourneyBackground 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -131,8 +131,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 512
-        height: 512
+        width: 1024
+        height: 1536
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6cf27253fd0e00900800000000000000
-      internalID: 648765595615440838
+      spriteID: f59cf20d4bee83580800000000000000
+      internalID: -8847059007615022753
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c16d79d1fe897ea49973f3761a697b37
+    spriteID: ad871c5b7a6edf74fb5564f5b0ed0831
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      JourneyBackground_0: 648765595615440838
+      JourneyBackground_0: -8847059007615022753
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

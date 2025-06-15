@@ -1,4 +1,5 @@
 ﻿using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,7 +25,14 @@ namespace Lumley.AiTest.Journey
         [Header("Configuration")]
         [SerializeField]
         private JourneyConfig _journeyConfig = null!;
-
+        
+        [Header("Animation")]
+        [SerializeField]
+        private float _fadeAnimationDuration = 0.3f;
+        
+        [SerializeField]
+        private float _delayPerGameIndex = 0.15f;
+        
         private Action<GameJourney>? _onStartGameClicked;
         private GameJourney? _gameJourney;
 
@@ -35,9 +43,23 @@ namespace Lumley.AiTest.Journey
             _stepImage.sprite = gameJourney.GameInfo.GameSprite;
             _colorGraphic.color = _journeyConfig.GetColorForDifficulty(gameJourney.Difficulty);
             _startGameButton.interactable = !gameJourney.IsCompleted;
+            _completedTransform.gameObject.SetActive(false);
             
-            // TODO (slumley): Animate the game completed with delay according to game index
-            _completedTransform.gameObject.SetActive(gameJourney.IsCompleted);
+            transform.localScale = Vector3.one * 0.1f;
+            transform.DOScale(Vector3.one, _fadeAnimationDuration)
+                .SetDelay(_delayPerGameIndex * gameJourney.GameIndex)
+                .SetEase(Ease.OutBack)
+                .OnComplete(() =>
+                {
+                    if (gameJourney.IsCompleted)
+                    {
+                        _completedTransform.localScale = Vector3.one * 0.1f;
+                        _completedTransform.gameObject.SetActive(true);
+                        _completedTransform.DOScale(Vector3.one, _fadeAnimationDuration)
+                            .SetDelay(_delayPerGameIndex * gameJourney.GameIndex)
+                            .SetEase(Ease.OutBack);
+                    }
+                });
         }
         
         private void OnEnable()

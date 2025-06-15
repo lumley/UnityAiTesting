@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49bc262341bd465c8840d226c862e06b, type: 3}
   m_Name: JourneyConfig
   m_EditorClassIdentifier: 
-  _dailyGameCountRange: {x: 4, y: 4}
+  _dailyGameCountRange: {x: 4, y: 6}
   _gamePool:
   - Scene:
       m_AssetGUID: a1aa11e1d79814dc3b1081668619d243
@@ -30,7 +30,7 @@ MonoBehaviour:
       m_EditorAssetChanged: 0
     GameSprite: {fileID: -376962682217914027, guid: b19d671e0e7dafb4587778f8b9b1e083, type: 3}
     Name: Tetris
-  _availableDifficultyLevels: 00000000010000000200000003000000
+  _availableDifficultyLevels: 000000000000000001000000010000000200000003000000
   _difficultyColorMaps:
   - Difficulty: 0
     Color: {r: 0.51370597, g: 0.9811321, b: 0.6030045, a: 1}
