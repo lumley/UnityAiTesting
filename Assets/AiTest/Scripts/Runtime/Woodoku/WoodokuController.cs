@@ -15,7 +15,9 @@ namespace Lumley.AiTest.Woodoku
 
         [SerializeField] private Transform _pieceArea = null!;
         [SerializeField] private PoolingManager _poolingManager = null!;
-        [SerializeField] private LineRenderer _lineRenderer = null!;
+        [SerializeField] private SpriteRenderer _gridCellPrefab = null!;
+        [SerializeField] private Color _gridCellColor1 = Color.sandyBrown;
+        [SerializeField] private Color _gridCellColor2 = Color.rosyBrown;
 
         [SerializeField] private WoodokuGameConfig _config = null!;
         
@@ -102,35 +104,19 @@ namespace Lumley.AiTest.Woodoku
 
         private void DrawGrid()
         {
-            // Prepare to draw the grid lines
-            var gridSize = _config.GridSize;
             var blockSize = _referenceBlock.GetBounds().size;
-            var start = _gridParent.position;
-            var cellWidth = blockSize.x;
-            var cellHeight = blockSize.y;
-
-            var linePoints = new List<Vector3>();
-
-            // Draw vertical lines
-            for (int x = 0; x <= gridSize; x++)
+            for (int x = 0; x < _config.GridSize; x++)
             {
-                var from = start + new Vector3(x * cellWidth, 0, 0);
-                var to = start + new Vector3(x * cellWidth, gridSize * cellHeight, 0);
-                linePoints.Add(from);
-                linePoints.Add(to);
+                for (int y = 0; y < _config.GridSize; y++)
+                {
+                    var cellPosition = new Vector3(x * blockSize.x, y * blockSize.y, 10f);
+                    var cell = Instantiate(_gridCellPrefab.gameObject, _gridParent);
+                    var spriteRenderer = cell.GetComponent<SpriteRenderer>();
+                    bool isAltColor = (x / 3 + y / 3) % 2 == 0;
+                    spriteRenderer.color = isAltColor ? _gridCellColor1 : _gridCellColor2;
+                    cell.transform.localPosition = cellPosition;
+                }
             }
-
-            // Draw horizontal lines
-            for (int y = 0; y <= gridSize; y++)
-            {
-                var from = start + new Vector3(0, y * cellHeight, 0);
-                var to = start + new Vector3(gridSize * cellWidth, y * cellHeight, 0);
-                linePoints.Add(from);
-                linePoints.Add(to);
-            }
-
-            _lineRenderer.positionCount = linePoints.Count;
-            _lineRenderer.SetPositions(linePoints.ToArray());
         }
 
         private void SpawnNewPieces()

@@ -17,10 +17,10 @@ namespace Lumley.AiTest.Tetris
         
         [SerializeField]
         private TetrisPiece[] _piecePrefabs = { };
-
+        
         [Header("Utilities")] [SerializeField] private PoolingManager poolingManager = null!;
 
-        [SerializeField] private LineRenderer _lineRenderer = null!;
+        [SerializeField] private GameObject _gridCellPrefab = null!;
 
         [Header("Camera Settings")] [SerializeField]
         private Camera _camera = null!;
@@ -33,9 +33,9 @@ namespace Lumley.AiTest.Tetris
         [Header("HUD")] [SerializeField] private TMP_Text _objectiveLinesText = null!;
         [SerializeField] private TMP_Text _currentLinesText = null!;
 
-        private TetrisGrid grid;
+        private TetrisGrid grid = null!;
         private TetrisPiece? currentPiece;
-        private TetrisPiece nextPiece; // TODO (slumley): Create a grid for previews, place there
+        private TetrisPiece? nextPiece; // TODO (slumley): Create a grid for previews, place there
         private float _fallTimer;
         private float _fallSpeed;
         private int _linesCleared;
@@ -61,26 +61,15 @@ namespace Lumley.AiTest.Tetris
 
         private void DrawGrid()
         {
-            _lineRenderer.positionCount = (_config.GridWidth + 1) * 2 + (_config.GridHeight + 1) * 2;
-            int idx = 0;
             var blockSize = _referenceBlock.GetBounds().size;
-            var blockWidth = blockSize.x;
-            var blockHeight = blockSize.y;
-
-            // Vertical lines
-            for (int x = 0; x <= _config.GridWidth; x++)
+            for (int x = 0; x < _config.GridWidth; x++)
             {
-                _lineRenderer.SetPosition(idx++, new Vector3((x - 0.5f) * blockWidth, -0.5f, 0));
-                _lineRenderer.SetPosition(idx++,
-                    new Vector3((x - 0.5f) * blockWidth, (_config.GridHeight - 0.5f) * blockHeight, 0));
-            }
-
-            // Horizontal lines
-            for (int y = 0; y <= _config.GridHeight; y++)
-            {
-                _lineRenderer.SetPosition(idx++, new Vector3(-0.5f, (y - 0.5f) * blockHeight, 0));
-                _lineRenderer.SetPosition(idx++,
-                    new Vector3((_config.GridWidth - 0.5f) * blockWidth, (y - 0.5f) * blockHeight, 0));
+                for (int y = 0; y < _config.GridHeight; y++)
+                {
+                    var cellPosition = new Vector3(x * blockSize.x, y * blockSize.y, 10f);
+                    var cell = Instantiate(_gridCellPrefab, _gridParent);
+                    cell.transform.localPosition = cellPosition;
+                }
             }
         }
 
