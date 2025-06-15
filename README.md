@@ -2,6 +2,11 @@
 
 Case Study: how to build small casual games trying to take the maximum advantage of AI.
 
+The game is supports the following platforms:
+ - PC/Standalone
+ - Mobile (Android/iOS)
+ - WebGL (experimental)
+
 ## Architecture
 
 This project follows a Toolbox pattern along with a variant of the MVC (Model-View-Controller) architecture, commonly used in Unity projects. The aim is to allow artists and designers to manipulate the behaviour of the game easily, so almost everything that can be exposed to the Editor inspector, is exposed. There's also several small tools to help isolate behaviour and reduce effort when setting up new scenes or tests, which is very common on prototypes.
