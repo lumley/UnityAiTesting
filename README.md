@@ -28,6 +28,15 @@ This separation keeps game logic, UI, and input handling organized and maintaina
  - Two puzzle games: Tetris and Woodoku.
  - Optimised drawing using Sprite Atlasses.
  - Optimised asset management via Addressables and Asset Bundles. Can be modified to use remote bundles to reduce the final build size and allow for remote asset updates without supplying a new app version.
+ - Automated creation of blocks with sprites (more on that below).
+ - Easy pooling without keeping references to unpooled objects to ease development or exceptions when we want to modify existing objects destructively.
+ - Adds custom fonts optimized for languages.
+ - Simple animations via DOTween.
+ - Asynchronous loading of scenes and related assets.
+ - Asynchronous API to allow loading player data remotely or from any other source.
+ - Very simple mechanisms to support player data versioning (I'd usually go for Protocol Buffers which is far more efficient and supports versioning better).
+ - Default presets to ensure several asset types are always imported with the desired settings (look for `preset` files).
+
 
 ## AI Used
 
@@ -100,5 +109,7 @@ Unity has `AssetPostprocessor`s, which are classes triggered before and after as
 While I've built scripts like this before, this is one instance where ChatGPT managed to deliver a fully functional script, with only very minor personal touches.
 
 ## Things that didn't make it
- - Sound! I could not easily find AIs that would generate so I decided to leave the project silent.
+ - Sounds! I could not easily find AIs that would generate so I decided to leave the project silent.
  - Use Localization and integrate auto-translation of the localization assets in Editor (not in runtime).
+ - ColorSort and BlockJam games, I wanted to reach an overall better experience for the lack of time.
+ - Timeline to perform certain animations. The tool is great but it's hard to envision how to combine with AI workflows.
