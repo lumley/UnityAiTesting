@@ -55,6 +55,7 @@ namespace Lumley.AiTest.Woodoku
             _camera.CenterCameraOnGrid(
                 blockSize,
                 new Vector2Int(_config.GridSize, _config.GridSize),
+                new Vector2(0.45f, 0.4f),
                 _cameraDistanceFactor);
             SpawnNewPieces();
             DrawGrid();

@@ -564,7 +564,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 30
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 600, y: 800}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -1450,7 +1450,7 @@ MonoBehaviour:
   _poolingManager: {fileID: 523020395}
   _gridCellPrefab: {fileID: 4627855188395018182, guid: c3c887a060d15ee4982b8c9317bf3274, type: 3}
   _camera: {fileID: 1820376158}
-  _cameraDistanceFactor: 0.3
+  _cameraDistanceFactor: 0.4
   _referenceBlock: {fileID: 5492075600329362173, guid: 606967182dec54895ad6c24c3095035c, type: 3}
   _objectiveLinesText: {fileID: 963400327}
   _currentLinesText: {fileID: 681664218}

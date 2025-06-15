@@ -53,7 +53,7 @@ namespace Lumley.AiTest.GameShared
             var daysSincePrevious = realtimeDay - LastSavedRealtimeDay;
             if (daysSincePrevious == 0)
             {
-                return ICurrentSessionManager.SessionRealtimeResult.StreakContinues;
+                return ICurrentSessionManager.SessionRealtimeResult.StreakRemains;
             }
 
             if (daysSincePrevious == 1 && AreAllGamesCompleted())

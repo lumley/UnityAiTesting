@@ -13,8 +13,9 @@ namespace Lumley.AiTest.Utilities
 	    /// <param name="camera"><see cref="Camera"/> to center</param>
 	    /// <param name="blockSize"><see cref="Vector2"/> with the size of a single block</param>
 	    /// <param name="gridSize"><see cref="Vector2Int"/> with the amount of columns and rows in a grid</param>
+	    /// <param name="center"><see cref="Vector2"/> with what's considered the center, usually (0.5f, 0.5f)</param>
 	    /// <param name="cameraDistanceFactor"><see cref="float"/> extra margin around the visible area</param>
-	    public static void CenterCameraOnGrid(this Camera camera, Vector2 blockSize, Vector2Int gridSize, float cameraDistanceFactor = 0.1f)
+	    public static void CenterCameraOnGrid(this Camera camera, Vector2 blockSize, Vector2Int gridSize, Vector2 center, float cameraDistanceFactor = 0.1f)
 	    {
 		    // Ensure the camera is orthographic
 		    if (!camera.orthographic)
@@ -27,8 +28,8 @@ namespace Lumley.AiTest.Utilities
 		    var gridWidth = gridSize.x;
 		    var gridHeight = gridSize.y;
 		    var originalCameraPositionZ = camera.transform.position.z;
-		    camera.transform.position = new Vector3(gridWidth * blockSize.x / 2f,
-			    gridHeight * blockSize.y / 2f, originalCameraPositionZ);
+		    camera.transform.position = new Vector3(gridWidth * blockSize.x * center.x,
+			    gridHeight * blockSize.y * center.y, originalCameraPositionZ);
 		    camera.orthographicSize = Mathf.Max(gridWidth * blockSize.x, gridHeight * blockSize.y) * (0.5f + cameraDistanceFactor);
 	    }
     }

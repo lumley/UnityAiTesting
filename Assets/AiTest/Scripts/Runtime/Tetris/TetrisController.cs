@@ -50,8 +50,7 @@ namespace Lumley.AiTest.Tetris
 
             _grid = new TetrisGrid(_config.GridWidth, _config.GridHeight, _gridParent);
             var blockSize = _referenceBlock.GetBounds().size;
-            _camera.CenterCameraOnGrid(blockSize, new Vector2Int(_config.GridWidth, _config.GridHeight),
-                _cameraDistanceFactor);
+            _camera.CenterCameraOnGrid(blockSize, new Vector2Int(_config.GridWidth, _config.GridHeight), new Vector2(0.2f, 0.5f), _cameraDistanceFactor);
             
             // Move the preview grid top left of the grid
             _previewGridParent.localPosition = new Vector3(-_config.GridWidth * blockSize.x * 0.5f,

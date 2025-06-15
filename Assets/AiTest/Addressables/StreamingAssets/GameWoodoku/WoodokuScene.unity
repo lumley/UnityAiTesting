@@ -171,7 +171,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 30
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 600, y: 800}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -1006,7 +1006,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6141147285514899863, guid: 99d57ab9121f97b4dba510c43f8d3915, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -19.99997
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 6141147285514899863, guid: 99d57ab9121f97b4dba510c43f8d3915, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1702,7 +1702,7 @@ MonoBehaviour:
   _gridCellColor2: {r: 0.7372549, g: 0.5607843, b: 0.5607843, a: 1}
   _config: {fileID: 11400000, guid: 03ba4fef86aaa86488a47fa35901424e, type: 2}
   _camera: {fileID: 1268888325}
-  _cameraDistanceFactor: 0.47
+  _cameraDistanceFactor: 0.8
   _referenceBlock: {fileID: 5492075600329362173, guid: 606967182dec54895ad6c24c3095035c, type: 3}
   _piecePool:
   - {fileID: 5764036440287027319, guid: 5d4e3589f831d9049b2d9a7e4e5c6505, type: 3}
@@ -1921,7 +1921,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 200.00002, y: -19.99997}
+  m_AnchoredPosition: {x: 200.00002, y: -20}
   m_SizeDelta: {x: 200, y: 110}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1737434111

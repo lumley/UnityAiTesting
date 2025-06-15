@@ -17,18 +17,14 @@ namespace Lumley.AiTest.Journey
     {
         [Header("Introduction")] [SerializeField]
         private GameObject _introductionRoot = null!;
-        
-        [SerializeField]
-        private TMP_Text _journeyDayText = null!;
-        
-        [SerializeField]
-        private string _journeyDayTextFormat = "Day {0} of your journey";
-        
-        [SerializeField]
-        private TMP_Text _journeyHoursLeftText = null!;
-        
-        [SerializeField]
-        private string _journeyHoursLeftTextFormat = "You have {0}h {1}m left to complete it";
+
+        [SerializeField] private TMP_Text _journeyDayText = null!;
+
+        [SerializeField] private string _journeyDayTextFormat = "Day {0} of your journey";
+
+        [SerializeField] private TMP_Text _journeyHoursLeftText = null!;
+
+        [SerializeField] private string _journeyHoursLeftTextFormat = "You have {0}h {1}m left to complete it";
 
         [Header("Streak Lost")] [SerializeField]
         private GameObject _streakLostRoot = null!;
@@ -38,7 +34,7 @@ namespace Lumley.AiTest.Journey
 
         [Header("Configuration")] [SerializeField]
         private JourneyConfig _journeyConfig = null!;
-        
+
         [SerializeField, Tooltip("Load mode of the scene when starting a game from the journey")]
         private LoadSceneMode _loadSceneMode = LoadSceneMode.Single;
 
@@ -47,9 +43,9 @@ namespace Lumley.AiTest.Journey
         private Transform _journeyStepRoot = null!;
 
         [SerializeField] private GameObject _journeyStepPrefab = null!;
-        
+
         [Header("Cheats")] [SerializeField] private Button _advanceDayButton = null!;
-        
+
         private float _nextTextUpdateTimestamp = 0f;
 
         private void Start()
@@ -80,6 +76,11 @@ namespace Lumley.AiTest.Journey
             {
                 DisplayGameOver();
             }
+            else if (sessionRealtimeResult == ICurrentSessionManager.SessionRealtimeResult.StreakContinues)
+            {
+                // Save the session now!
+                SaveSessionInBackground(currentSessionManager);
+            }
             else if (currentSessionManager.PlayerGameStreak == 0 && currentSessionManager.CompletedGameCount == 0)
             {
                 DisplayIntroduction();
@@ -96,18 +97,33 @@ namespace Lumley.AiTest.Journey
             DisplayJourneyMap(gamesForDay);
         }
 
+        private async void SaveSessionInBackground(ICurrentSessionManager currentSessionManager)
+        {
+            try
+            {
+                var sessionPersistenceManager = Toolbox.Get<ISessionPersistenceManager>();
+                var serializableSession = currentSessionManager.ExportSession();
+                await sessionPersistenceManager.PersistSessionAsync(serializableSession);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
+        }
+
         private void Update()
         {
             if (Time.time < _nextTextUpdateTimestamp)
             {
                 return;
             }
-            
+
             DateTime now = DateTime.Now;
             DateTime tomorrow = now.Date.AddDays(1);
             TimeSpan timeLeft = tomorrow - now;
 
-            _journeyHoursLeftText.text = string.Format(_journeyHoursLeftTextFormat, (int)timeLeft.TotalHours, timeLeft.Minutes);
+            _journeyHoursLeftText.text =
+                string.Format(_journeyHoursLeftTextFormat, (int)timeLeft.TotalHours, timeLeft.Minutes);
         }
 
         private void DisplayJourneyMap(IReadOnlyList<GameJourney> gamesForDay)
@@ -148,7 +164,9 @@ namespace Lumley.AiTest.Journey
                 }
                 else
                 {
-                    Debug.LogError($"Instantiated journey step prefab does not have a {nameof(JourneyVisibleStep)} component attached. Please add it to the prefab.", instance);
+                    Debug.LogError(
+                        $"Instantiated journey step prefab does not have a {nameof(JourneyVisibleStep)} component attached. Please add it to the prefab.",
+                        instance);
                 }
             }
         }
@@ -170,7 +188,7 @@ namespace Lumley.AiTest.Journey
                 Debug.LogException(e, this);
             }
         }
-        
+
         private async void AdvanceDayCheatPressed()
         {
             try
@@ -181,7 +199,7 @@ namespace Lumley.AiTest.Journey
 
                 var serializableSession = currentSessionManager.ExportSession();
                 serializableSession.StartingDayEpoch -= 1;
-                
+
                 await sessionPersistenceManager.PersistSessionAsync(serializableSession);
                 currentSessionManager.LoadSession(serializableSession);
                 InitializeJourney();

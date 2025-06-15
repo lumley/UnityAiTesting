@@ -81,14 +81,25 @@ namespace Lumley.AiTest.GameShared
         protected abstract void UpdateGameplay();
         
         [ContextMenu("Win Game")]
-        protected void HandleWin()
+        protected async void HandleWin()
         {
-            var currentSessionManager = Toolbox.Get<ICurrentSessionManager>();
-            var currentGameInfoManager = Toolbox.Get<ICurrentGameInfoManager>();
+            try
+            {
+                var currentSessionManager = Toolbox.Get<ICurrentSessionManager>();
+                var currentGameInfoManager = Toolbox.Get<ICurrentGameInfoManager>();
             
-            currentSessionManager.SetGameIndexCompleted(currentGameInfoManager.CurrentGameIndex);
-            State = GameState.IsGameFinished;
-            _winPanel.gameObject.SetActive(true);
+                currentSessionManager.SetGameIndexCompleted(currentGameInfoManager.CurrentGameIndex);
+                State = GameState.IsGameFinished;
+                _winPanel.gameObject.SetActive(true);
+
+                var sessionPersistenceManager = Toolbox.Get<ISessionPersistenceManager>();
+                var serializableSession = currentSessionManager.ExportSession();
+                await sessionPersistenceManager.PersistSessionAsync(serializableSession);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
         }
         
         [ContextMenu("Lose Game")]

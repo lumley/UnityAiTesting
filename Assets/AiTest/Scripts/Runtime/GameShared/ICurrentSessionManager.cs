@@ -67,8 +67,20 @@ namespace Lumley.AiTest.GameShared
         /// </summary>
         public enum SessionRealtimeResult
         {
-            StreakContinues = 0,
-            StreakBroken = 1,
+            /// <summary>
+            /// Day has not changed
+            /// </summary>
+            StreakRemains = 0,
+            
+            /// <summary>
+            /// Day has changed and the streak continues
+            /// </summary>
+            StreakContinues = 1,
+            
+            /// <summary>
+            /// Day has changed and the streak is broken, either because the player didn't complete all games or because the day is not consecutive with the last one.
+            /// </summary>
+            StreakBroken = 2,
         }
     }
 }
