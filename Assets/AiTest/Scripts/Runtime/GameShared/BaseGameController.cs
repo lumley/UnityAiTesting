@@ -27,12 +27,20 @@ namespace Lumley.AiTest.GameShared
         [SerializeField]
         private AssetReference _mainMenuScene = null!;
         
+        [Header("Cheats")] [SerializeField] private Button _autoWinButton = null!;
+        
         protected GameState State;
         
         protected async void Start()
         {
             try
             {
+#if ENABLE_CHEATS
+                _autoWinButton.gameObject.SetActive(true);
+                _autoWinButton.onClick.AddListener(HandleWin);
+#else
+                _autoWinButton.gameObject.SetActive(false);
+#endif
                 AddButtonListeners();
                 _resumeButton.gameObject.SetActive(false);
                 _pauseButton.gameObject.SetActive(true);

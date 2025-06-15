@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using Lumley.AiTest.GameShared;
 using Lumley.AiTest.SceneManagement;
 using Lumley.AiTest.Utilities;
@@ -55,7 +54,12 @@ namespace Lumley.AiTest.Journey
 
         private void Start()
         {
+#if ENABLE_CHEATS
+            _advanceDayButton.gameObject.SetActive(true);
             _advanceDayButton.onClick.AddListener(AdvanceDayCheatPressed);
+#else
+            _advanceDayButton.gameObject.SetActive(false);
+#endif
         }
 
         private void OnEnable()
