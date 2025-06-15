@@ -338,7 +338,7 @@ Transform:
   m_GameObject: {fileID: 173877735}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -12, z: 0}
+  m_LocalPosition: {x: 0, y: -17, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1700,13 +1700,16 @@ MonoBehaviour:
   _gridCellColor2: {r: 0.7372549, g: 0.5607843, b: 0.5607843, a: 1}
   _config: {fileID: 11400000, guid: 03ba4fef86aaa86488a47fa35901424e, type: 2}
   _camera: {fileID: 1268888325}
-  _cameraDistanceFactor: 0.4
+  _cameraDistanceFactor: 0.47
   _referenceBlock: {fileID: 5492075600329362173, guid: 606967182dec54895ad6c24c3095035c, type: 3}
   _piecePool:
-  - {fileID: 4693606310715557049, guid: db4db7697cefe734189f4741e2004ce6, type: 3}
-  - {fileID: 5764036440287027319, guid: 7b35628183deda24eb5ea72d94eb89f5, type: 3}
+  - {fileID: 5764036440287027319, guid: 5d4e3589f831d9049b2d9a7e4e5c6505, type: 3}
+  - {fileID: 5764036440287027319, guid: da2168a398f81644f96f674e00f417ae, type: 3}
+  - {fileID: 5764036440287027319, guid: f9f18936287b53f42a584d055030cf34, type: 3}
   - {fileID: 2732965748091584791, guid: 9bd913fde3524b84e93e8773e339cb71, type: 3}
+  - {fileID: 4693606310715557049, guid: db4db7697cefe734189f4741e2004ce6, type: 3}
   - {fileID: 2024079198554848048, guid: 8a88af520c39af6448d26729a1e4777e, type: 3}
+  - {fileID: 5764036440287027319, guid: 7b35628183deda24eb5ea72d94eb89f5, type: 3}
   _objectivePointsText: {fileID: 382811194}
   _currentPointsText: {fileID: 419614003}
   _piecesLeftText: {fileID: 1476970450}

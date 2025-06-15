@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: WoodokuGameConfig
   m_EditorClassIdentifier: 
   TargetScores: f4010000e8030000d007000088130000
-  PiecesCount: 140000000f0000000a00000005000000
+  PiecesCount: 1e0000001e0000002300000028000000
   GridSize: 9
+  LineOrSquareBonus: 100
