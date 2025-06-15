@@ -31,13 +31,20 @@ MonoBehaviour:
     GameSprite: {fileID: -376962682217914027, guid: b19d671e0e7dafb4587778f8b9b1e083, type: 3}
     Name: Tetris
   _availableDifficultyLevels: 000000000000000001000000010000000200000003000000
-  _difficultyColorMaps:
+  _difficultyInfoArray:
   - Difficulty: 0
-    Color: {r: 0.51370597, g: 0.9811321, b: 0.6030045, a: 1}
+    Color: {r: 0.39837232, g: 0.8113208, b: 0.37121755, a: 1}
+    Description: Easy
   - Difficulty: 1
-    Color: {r: 0.92916656, g: 1, b: 0.42745098, a: 1}
+    Color: {r: 0.9052312, g: 0.9433962, b: 0.32484868, a: 1}
+    Description: Medium
   - Difficulty: 2
     Color: {r: 0.9811321, g: 0.4336651, b: 0.21751513, a: 1}
+    Description: Hard
   - Difficulty: 3
     Color: {r: 1, g: 0.2971698, b: 0.2971698, a: 1}
-  _defaultDifficultyColor: {r: 1, g: 1, b: 1, a: 1}
+    Description: Impossible
+  _defaultDifficultyMap:
+    Difficulty: 0
+    Color: {r: 1, g: 1, b: 1, a: 1}
+    Description: Unknown

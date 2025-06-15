@@ -1,5 +1,6 @@
 ﻿using System;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +23,9 @@ namespace Lumley.AiTest.Journey
         [SerializeField]
         private Button _startGameButton = null!;
         
+        [SerializeField]
+        private TMP_Text _difficultyText = null!;
+        
         [Header("Configuration")]
         [SerializeField]
         private JourneyConfig _journeyConfig = null!;
@@ -41,7 +45,9 @@ namespace Lumley.AiTest.Journey
             _gameJourney = gameJourney;
             _onStartGameClicked = onStartGameClicked;
             _stepImage.sprite = gameJourney.GameInfo.GameSprite;
-            _colorGraphic.color = _journeyConfig.GetColorForDifficulty(gameJourney.Difficulty);
+            var infoForDifficulty = _journeyConfig.GetInfoForDifficulty(gameJourney.Difficulty);
+            _colorGraphic.color = infoForDifficulty.Color;
+            _difficultyText.text = infoForDifficulty.Description;
             _startGameButton.interactable = !gameJourney.IsCompleted;
             _completedTransform.gameObject.SetActive(false);
             

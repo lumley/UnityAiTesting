@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Lumley.AiTest.GameShared;
 using Lumley.AiTest.SceneManagement;
 using Lumley.AiTest.Utilities;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +17,12 @@ namespace Lumley.AiTest.Journey
         [Header("Introduction")] [SerializeField]
         private GameObject _introductionRoot = null!;
         // TODO (slumley): Add reference to timeline to start playing it and await until it's done
+        
+        [SerializeField]
+        private TMP_Text _journeyDayText = null!;
+        
+        [SerializeField]
+        private string _journeyDayTextFormat = "Day {0} of your journey";
 
         [Header("Streak Lost")] [SerializeField]
         private GameObject _streakLostRoot = null!;
@@ -42,6 +49,7 @@ namespace Lumley.AiTest.Journey
             var lastSavedRealtimeDay = currentSessionManager.LastSavedRealtimeDay;
             var baseSeed = currentSessionManager.BaseSeed;
             var sessionRealtimeResult = currentSessionManager.SetRealtimeDay(currentDayEpoch);
+            _journeyDayText.text = string.Format(_journeyDayTextFormat, currentSessionManager.PlayerGameStreak);
             if (sessionRealtimeResult == ICurrentSessionManager.SessionRealtimeResult.StreakBroken)
             {
                 DisplayGameOver();

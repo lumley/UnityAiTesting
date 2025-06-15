@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Playables;
 
@@ -11,6 +12,25 @@ namespace Lumley.AiTest.ComponentUtilities
     {
         [SerializeField]
         private PlayableDirector _playableDirector = null!;
+
+        [SerializeField] private bool _startPlayingOnEnable;
+
+        private async void OnEnable()
+        {
+            if (!_startPlayingOnEnable)
+            {
+                return;
+            }
+
+            try
+            {
+                await PlayTimelineAsync();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
+        }
 
         public async Task PlayTimelineAsync()
         {

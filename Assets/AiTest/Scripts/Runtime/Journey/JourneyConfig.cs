@@ -2,6 +2,7 @@
 using Lumley.AiTest.GameShared;
 using Lumley.AiTest.Utilities;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Lumley.AiTest.Journey
 {
@@ -30,11 +31,15 @@ namespace Lumley.AiTest.Journey
             GameDifficulty.Impossible
         };
         
-        [SerializeField, Tooltip("Color map for each difficulty level")]
-        private DifficultyColorMap[] _difficultyColorMaps = new DifficultyColorMap[0];
+        [FormerlySerializedAs("_difficultyColorMaps")] [SerializeField, Tooltip("Color map for each difficulty level")]
+        private DifficultyInfo[] _difficultyInfoArray = new DifficultyInfo[0];
         
         [SerializeField, Tooltip("Default color for unknown difficulties")]
-        private Color _defaultDifficultyColor = Color.white;
+        private DifficultyInfo _defaultDifficultyMap = new()
+        {
+            Color = Color.white,
+            Description = "Unknown"
+        };
 
         /// <summary>
         /// Gets the amount of games that should be generated for a given day
@@ -81,31 +86,32 @@ namespace Lumley.AiTest.Journey
         }
         
         /// <summary>
-        /// Gets the color for a given difficulty level
+        /// Gets info for a given difficulty level
         /// </summary>
         /// <param name="difficulty"><see cref="GameDifficulty"/> to test</param>
-        /// <returns><see cref="Color"/> with the difficulty</returns>
-        public Color GetColorForDifficulty(GameDifficulty difficulty)
+        /// <returns><see cref="DifficultyInfo"/> with info of the difficulty</returns>
+        public DifficultyInfo GetInfoForDifficulty(GameDifficulty difficulty)
         {
-            foreach (var difficultyColorMap in _difficultyColorMaps)
+            foreach (var difficultyColorMap in _difficultyInfoArray)
             {
                 if (difficultyColorMap.Difficulty == difficulty)
                 {
-                    return difficultyColorMap.Color;
+                    return difficultyColorMap;
                 }
             }
 
-            return _defaultDifficultyColor;
+            return _defaultDifficultyMap;
         }
         
         /// <summary>
         /// Color map for each difficulty level
         /// </summary>
         [Serializable]
-        public sealed class DifficultyColorMap
+        public sealed class DifficultyInfo
         {
             public GameDifficulty Difficulty;
             public Color Color;
+            public string Description;
         }
     }
 }

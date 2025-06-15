@@ -4,27 +4,37 @@ Case Study: how to build small casual games trying to take the maximum advantage
 
 ## Architecture
 
-This project follows a Toolbox pattern along with a variant of the MVC (Model-View-Controller) architecture, commonly used in Unity projects.
+This project follows a Toolbox pattern along with a variant of the MVC (Model-View-Controller) architecture, commonly used in Unity projects. The aim is to allow artists and designers to manipulate the behaviour of the game easily, so almost everything that can be exposed to the Editor inspector, is exposed. There's also several small tools to help isolate behaviour and reduce effort when setting up new scenes or tests, which is very common on prototypes.
 
 *Toolbox*
+
 This is a variant of a `Singleton` pattern but with one only singleton in the game, the Toolbox. This gives access to all other systems. This choice was made to keep the code simple and flexible, such an approach allows to easily set up multiple scenes and play from them directly with valid states.
 
 *Model*
+
 Data structures that encapsulate the data and logic for the mini games. For example: `WoodokuGrid`, `WoodokuPiece`, and `WoodokuGameConfig` classes represent the game state, rules, and configuration. 
 
 *View*
+
 Unity GameObjects, such as the grid cells, pieces, and UI elements (TMP_Text for score), act as the View. They visually represent the game state to the player. The DrawGrid and UI update code in `WoodokuController` update these views.
 
 *Controller*
+
 It handles user input, updates the model (game state), and refreshes the view. It manages game flow, piece spawning, score updates, and win/loss conditions. The `WoodokuController` class acts as the Controller, as well as `Manager` classes.
 
 This separation keeps game logic, UI, and input handling organized and maintainable.
+
+### Features Included
+ - Two puzzle games: Tetris and Woodoku.
+ - Optimised drawing using Sprite Atlasses.
+ - Optimised asset management via Addressables and Asset Bundles. Can be modified to use remote bundles to reduce the final build size and allow for remote asset updates without supplying a new app version.
 
 ## AI Used
 
 Since the purpose was to try to "abuse" AI, a substantial time has been dedicated to trying to get an AI to build as much of the project as possible. Several AIs have been tested and used, with various degrees of success.
 
 ### For Coding
+
  - ChatGPT
 
 For writing individual modules, it works great. I have not tested coding with ChatGPT and a token for integrating or providing custom context. It has a tendency to loop around wrong solutions, in those cases, it's better to just drop the conversation and start a new one. Just like Copilot, they do tend to "hallucinate" non-existing APIs.
@@ -44,6 +54,12 @@ Having an AI integrated into the project should be very useful. For repetitive t
 I was impressed with how much detail it can put into building an entire system. I tried just telling it to create the entire game, with all mini-games, and it did generate lots of code for it. The code was gramatically correct, although many parts did not make sense (e.g. you tell it to use pooling, it creates a pool, declare it in a class and immediately after start instantiating and destroying objects, ignoring the pool). It also generated lots of unused code and variables. Sadly trying to improve iteratively did not help much, even giving brand new commands with much more detail. The less detailed the command, the better it behaved.
 
 All the code for the mini-games was based on the first iteration from Claude.ai, ColorSort and BlockJam are still almost untouched (just reformatted, simplified and adapted to no longer existing systems). The original commit that included all the code [can be seen here](https://github.com/lumley/UnityAiTesting/commit/5b578634117430f3e4150e371263ffe46ad68f87).
+
+*Conclusion*
+
+Claude.ai helped shape the full app from the start, which would've gotten the project kickstarted quite fast. Copilot works quite well implementing existing interfaces and small new methods, sometimes not so good modifying existing code, has not been so useful when attempting to get many classes generated at once. ChatGPT suffered from a lack of context so modifying existing classes was more complicated, but did generate good code on isolated features.
+
+Overall every AI tended to generate solutions based exclusively in code instead of taking advantage of serialized fields or Unity components. An example was when making Woodoku pieces draggable with touch/mouse. Every AI tried to build a complex system of reading clicks system-wide and trying to determine if the object was touched. Only ChatGPT eventually suggested to simply use existing Unity components (Collider2D + Raycaster2D on camera + Implement the appropriate interfaces), but this was after much insisting on my side.
 
 ### For Art
 
