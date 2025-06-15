@@ -33,6 +33,8 @@ namespace Lumley.AiTest.Woodoku
         
         [Header("HUD")] [SerializeField] private TMP_Text _objectivePointsText = null!;
         [SerializeField] private TMP_Text _currentPointsText = null!;
+        [SerializeField] private TMP_Text _piecesLeftText = null!;
+        [SerializeField] private string _piecesLeftTextFormat = "You have {0} pieces left";
 
         private WoodokuGrid _grid = null!; // Grid is only accessed internally and nothing runs until initialized, so it's safe to use null-forgiving operator here.
         private readonly List<WoodokuPiece> _availablePieces = new();
@@ -43,7 +45,7 @@ namespace Lumley.AiTest.Woodoku
         protected override Task InitializeGameAsync(GameDifficulty difficulty)
         {
             _targetScore = _config.TargetScores[(int)difficulty];
-            _piecesRemaining = _config.PiecesCount[(int)difficulty];
+            SetPiecesRemaining(_config.PiecesCount[(int)difficulty]);
             
             _objectivePointsText.text = _targetScore.ToString();
             _currentPointsText.text = "0";
@@ -87,7 +89,7 @@ namespace Lumley.AiTest.Woodoku
                 _currentPointsText.text = _currentScore.ToString();
                 _grid.PlacePiece(piece, worldPos, _gridParent);
 
-                _piecesRemaining--;
+                SetPiecesRemaining(_piecesRemaining - 1);
 
                 CheckForCompletedLines();
 
@@ -168,6 +170,12 @@ namespace Lumley.AiTest.Woodoku
             {
                 HandleLose();
             }
+        }
+
+        private void SetPiecesRemaining(int piecesRemaining)
+        {
+            _piecesRemaining = piecesRemaining;
+            _piecesLeftText.text = string.Format(_piecesLeftTextFormat, _piecesRemaining);
         }
     }
 }
