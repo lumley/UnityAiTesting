@@ -34,10 +34,8 @@ namespace Lumley.AiTest.Journey
         [Header("Streak Lost")] [SerializeField]
         private GameObject _streakLostRoot = null!;
 
-        [SerializeField] private CanvasGroup _streakLostCanvasGroup = null!;
         [SerializeField] private TMP_Text _streakLostText = null!;
         [SerializeField] private string _streakLostTextFormat = "You lost your streak of {0} days! Try again!";
-        [SerializeField] private float _streakLostFadeDuration = 1f;
 
         [Header("Configuration")] [SerializeField]
         private JourneyConfig _journeyConfig = null!;
@@ -203,11 +201,11 @@ namespace Lumley.AiTest.Journey
                 _streakLostText.text = string.Format(_streakLostTextFormat, playerGameStreak);
 
                 _streakLostRoot.gameObject.SetActive(true);
-                _streakLostCanvasGroup.DOFade(1f, _streakLostFadeDuration);
 
                 // Erase the current session
                 var sessionPersistenceManager = Toolbox.Get<ISessionPersistenceManager>();
                 await sessionPersistenceManager.PersistSessionAsync(SerializableSession.Null);
+                currentSessionManager.LoadSession(SerializableSession.Null);
             }
             catch (Exception e)
             {
